@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+	<link rel="stylesheet" href="game.css">
+</head>
+<body>
+<body ng-app="app">
+	<div ng-controller="GameCtrl as game">
+		<div id="game">
+			<div id="board">
+				<div ng-repeat="square in game.board" class="square" ng-class="game.chckBrd(square.x, square.y) ? 'squareBlack' : 'square'" id="{{square.x}}-{{square.y}}">
+				</div>
+				<div id="pieces">
+					<div ng-repeat="piece in game.pieces" class="{{piece.color}}" id="{{piece.number}}" ng-style="{'top':'{{piece.top}}', 'left': '{{piece.left}}'}">
+				</div>
+			</div>
+		</div>
+
+		<div id="meta">
+
+		<h4>Moves: <span id="moveCount">0</span></h4>
+		</div>
+	</div>
+<script type="text/javascript" src="bower_components/angular/angular.min.js"></script>
+<!-- <script type="text/javascript" src="https://code.jquery.com/jquery-3.0.0.min.js"></script> -->
+<script type="text/javascript" src="app.js"></script>
+<!-- <script type="text/javascript" src="script.js"></script> -->
+<!-- <script type="text/javascript" src="provided.js"></script> -->
+</body>
+</html>
