@@ -166,6 +166,7 @@ angular.module('app', [])
 					});
 				}
 			}
+			removeSelected();
 		}
 	})
 
