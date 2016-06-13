@@ -1,42 +1,49 @@
 angular.module('app', [])
-	.factory('BoardFact', () => {
+	.factory('BoardFact', ($timeout) => {
+		var config = {
+			apiKey: "AIzaSyBrbaIJrMqiL1Ho_rM35FgieqOyAjF-BiE",
+			authDomain: "checkers-f4624.firebaseapp.com",
+			databaseURL: "https://checkers-f4624.firebaseio.com",
+			storageBucket: "checkers-f4624.appspot.com",
+		};
+		firebase.initializeApp(config);
 		const row = 8;
 		var pieceCount = row*2;
 		var pieces = [];
-		var squares = [];
-		for (var x=0; x<row; x++) {
-			for(var y=0; y<row; y++) {
-				squares.push({
-					'x': x,
-					'y': y
-				});
-			}
-		}
-		for(var i=0; i<pieceCount; i++) {
+		var squares;
+		// firebase.database().ref('board/').on('value', (snap) => {
+		// 	squares = snap.val();
+		// 	$timeout();
+		// })
+		// for(var i=0; i<pieceCount; i++) {
+		// 	if (i < pieceCount/2) {
 
-
-			if (i < pieceCount/2) {
-				var y = Math.floor(i / 4);
-      	var x = (i % 4) * 2 + (1 - y%2);
-				pieces.push({
-					'number': i,
-					'color': 'red',
-        	'top':  (y * 70)+'px',
-        	'left': (x * 70)+'px'
-				});
-			}	else {
-				var y = Math.floor(i/4) + 4;
-        var x = (i % 4) * 2 + (1-y%2)
-				pieces.push({
-					'number': i,
-					'color': 'white',
-					'top':  (y * 70)+'px',
-        	'left': (x * 70)+'px'
-				});
-			}
-		}
+		// 		// player 1
+		// 		var y = Math.floor(i / 4);
+		// 		var x = (i % 4) * 2 + (1 - y%2);
+		// 		firebase.database().ref('pieces/').push({
+		// 			'color': 'red',
+		// 			'top':  (y * 70)+'px',
+		// 			'left': (x * 70)+'px',
+		// 			'x': x,
+		// 			'y': y
+		// 		});
+		// 	}	else {
+		// 		// player 2
+		// 		var y = Math.floor(i/4) + 4;
+		// 		var x = (i % 4) * 2 + (1-y%2)
+		// 		firebase.database().ref('pieces/').push({
+		// 			'color': 'white',
+		// 			'top':  (y * 70)+'px',
+		// 			'left': (x * 70)+'px',
+		// 			'x': x,
+		// 			'y': y
+		// 		});
+		// 	}
+		// }
 		return {
 			squares () {
+				console.log(squares);
 				return squares;
 			},
 			pieces () {
@@ -45,16 +52,52 @@ angular.module('app', [])
 		}
 	})
 
-	.controller('GameCtrl', function (BoardFact) {
+	.controller('GameCtrl', function (BoardFact, $timeout) {
 		const game = this;
 		game.heading = "Checkers";
-		game.board = BoardFact.squares();
-		game.pieces = BoardFact.pieces();
+		firebase.database().ref('board/').on('value', (snap) => {
+			game.board = snap.val();
+			$timeout();
+		})
+		firebase.database().ref('pieces/').on('value', (snap) => {
+			game.pieces = snap.val();
+			$timeout();
+		})
+		// game.board = BoardFact.squares();
+		// game.pieces = BoardFact.pieces();
 		game.chckBrd = (x, y) => {
 			var oddX = x % 2;
 			var oddY = y % 2;
 			return (oddX ^ oddY);
 		}
-		game.position
+		game.choosePiece = (x,y) => {
+
+		}
 
 	})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
