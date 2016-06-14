@@ -85,7 +85,7 @@ angular.module('app', [])
 			var possibleSquare;
 			currentPiece = piece;
 			currentPiece.id = id;
-			$(currentElement).addClass('selected');
+			$(currentElement).toggleClass('selected');
 			if(piece.color === 'red') {
 
 				function Move1 (x,y, index) {
@@ -98,7 +98,6 @@ angular.module('app', [])
 					this.x = x - 1;
 					this.y = y + 1;
 				}
-
 				for (var key in game.board) {
 					if(piece.x === game.board[key].y && piece.y === game.board[key].x) {
 						currentSquare = game.board[key];
@@ -108,23 +107,44 @@ angular.module('app', [])
 				}
 				for (var key in game.board) {
 					if (move1.index === game.board[key].index) { //&& is empty
-						$(`#${key}`).addClass('selected');
+						$(`#${key}`).toggleClass('selected');
 						choice1 = game.board[key];
 					} else if (move2.index === game.board[key].index) { //&& is empty
-						$(`#${key}`).addClass('selected');
+						$(`#${key}`).toggleClass('selected');
 						choice2 = game.board[key];
 					}
 				}
-
-
 			} else {
-				console.log('white')
+				function Move1 (x,y, index) {
+					this.index = index - 7;
+					this.x = x - 1;
+					this.y = y - 1;
+				}
+				function Move2 (x,y, index) {
+					this.index = index - 9;
+					this.x = x + 1;
+					this.y = y - 1;
+				}
+				for (var key in game.board) {
+					if(piece.x === game.board[key].y && piece.y === game.board[key].x) {
+						currentSquare = game.board[key];
+						var move1 = new Move1(currentSquare.x, currentSquare.y, currentSquare.index);
+						var move2 = new Move2(currentSquare.x, currentSquare.y, currentSquare.index);
+					}
+				}
+				for (var key in game.board) {
+					if (move1.index === game.board[key].index) { //&& is empty
+						$(`#${key}`).toggleClass('selected');
+						choice1 = game.board[key];
+					} else if (move2.index === game.board[key].index) { //&& is empty
+						$(`#${key}`).toggleClass('selected');
+						choice2 = game.board[key];
+					}
+				}
 			}
-
 		}
 		game.chooseSquare = (square) => {
 			if(square === choice1 || square === choice2) {
-				console.log(currentPiece);
 				var newTop = (square.x * 70) + 'px';
 				var newLeft = (square.y * 70) + 'px';
 				firebase.database().ref(`/pieces/${currentPiece.id}`).update({
@@ -134,7 +154,6 @@ angular.module('app', [])
 					x: square.y
 				});
 				removeSelected();
-
 			}
 		}
 
