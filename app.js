@@ -86,17 +86,30 @@ angular.module('app', [])
 			currentPiece = piece;
 			currentPiece.id = id;
 			$(currentElement).toggleClass('selected');
+			var takenSquares = [];
+			for (var id in game.pieces) {
+				if (game.pieces[id].x === piece.x && game.pieces[id].y === piece.y) {
+					console.log(piece);
+				} else {
+					takenSquares.push({
+						x: game.pieces[id].x,
+						y: game.pieces[id].y,
+						player: game.pieces[id].color
+					})
+				}
+			}
+			console.log(takenSquares);
 			if(piece.color === 'red') {
 
 				function Move1 (x,y, index) {
-					this.index = index + 7;
+					this.index = index + 9;
 					this.x = x + 1;
 					this.y = y + 1;
 				}
 				function Move2 (x,y, index) {
-					this.index = index + 9;
-					this.x = x - 1;
-					this.y = y + 1;
+					this.index = index + 7;
+					this.x = x + 1;
+					this.y = y - 1;
 				}
 				for (var key in game.board) {
 					if(piece.x === game.board[key].y && piece.y === game.board[key].x) {
@@ -107,23 +120,35 @@ angular.module('app', [])
 				}
 				for (var key in game.board) {
 					if (move1.index === game.board[key].index) { //&& is empty
-						$(`#${key}`).toggleClass('selected');
-						choice1 = game.board[key];
+						for (var i = 0; i<takenSquares.length; i++) {
+							if(move1.x === takenSquares[i].y && move1.y === takenSquares[i].x) {
+							} else {
+								$(`#${key}`).toggleClass('selected');
+								choice1 = game.board[key];
+
+							}
+						}
 					} else if (move2.index === game.board[key].index) { //&& is empty
-						$(`#${key}`).toggleClass('selected');
-						choice2 = game.board[key];
+						for (var i = 0; i<takenSquares.length; i++) {
+							if(move2.x === takenSquares[i].y && move2.y === takenSquares[i].x) {
+							} else {
+								$(`#${key}`).toggleClass('selected');
+								choice2 = game.board[key];
+							}
+						}
 					}
 				}
 			} else {
+				// player 2
 				function Move1 (x,y, index) {
-					this.index = index - 7;
+					this.index = index - 9;
 					this.x = x - 1;
 					this.y = y - 1;
 				}
 				function Move2 (x,y, index) {
-					this.index = index - 9;
-					this.x = x + 1;
-					this.y = y - 1;
+					this.index = index - 7;
+					this.x = x - 1;
+					this.y = y + 1;
 				}
 				for (var key in game.board) {
 					if(piece.x === game.board[key].y && piece.y === game.board[key].x) {
@@ -134,11 +159,22 @@ angular.module('app', [])
 				}
 				for (var key in game.board) {
 					if (move1.index === game.board[key].index) { //&& is empty
-						$(`#${key}`).toggleClass('selected');
-						choice1 = game.board[key];
+						for (var i = 0; i<takenSquares.length; i++) {
+							if(move1.x === takenSquares[i].y && move1.y === takenSquares[i].x) {
+							} else {
+								$(`#${key}`).toggleClass('selected');
+								choice1 = game.board[key];
+							}
+						}
 					} else if (move2.index === game.board[key].index) { //&& is empty
-						$(`#${key}`).toggleClass('selected');
-						choice2 = game.board[key];
+						for (var i = 0; i<takenSquares.length; i++) {
+							if(move2.x === takenSquares[i].y && move2.y === takenSquares[i].x) {
+
+							} else {
+								$(`#${key}`).toggleClass('selected');
+								choice2 = game.board[key];
+							}
+						}
 					}
 				}
 			}
@@ -188,29 +224,3 @@ angular.module('app', [])
 			removeSelected();
 		}
 	})
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
