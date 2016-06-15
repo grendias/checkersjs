@@ -22,7 +22,7 @@
 							ng-repeat="(id,piece) in game.pieces"
 							class="{{piece.color}}" id="{{id}}"
 							ng-style="{'top': piece.top, 'left': piece.left}"
-							ng-click="piece.player1 ? game.choosePiecePlayer1($event, piece, id) : game.choosePiecePlayer2($event, piece, id)"
+							ng-click="piece.king ? game.chooseKing($event, piece, id) : piece.player1 ? game.choosePiecePlayer1($event, piece, id) : game.choosePiecePlayer2($event, piece, id)"
 							ng-class="piece.king ? 'king': 'none'"
 							>
 
