@@ -1,3 +1,4 @@
+"use strict";
 angular.module('app', [])
 	.factory('BoardFact', ($timeout) => {
 		var config = {
@@ -7,40 +8,6 @@ angular.module('app', [])
 			storageBucket: "checkers-f4624.appspot.com",
 		};
 		firebase.initializeApp(config);
-		const row = 8;
-		var pieceCount = row*2;
-		var pieces = [];
-		var squares;
-		// firebase.database().ref('board/').on('value', (snap) => {
-		// 	squares = snap.val();
-		// 	$timeout();
-		// })
-		// for(var i=0; i<pieceCount; i++) {
-		// 	if (i < pieceCount/2) {
-
-		// 		// player 1
-		// 		var y = Math.floor(i / 4);
-		// 		var x = (i % 4) * 2 + (1 - y%2);
-		// 		firebase.database().ref('pieces/').push({
-		// 			'color': 'red',
-		// 			'top':  (y * 70)+'px',
-		// 			'left': (x * 70)+'px',
-		// 			'x': x,
-		// 			'y': y
-		// 		});
-		// 	}	else {
-		// 		// player 2
-		// 		var y = Math.floor(i/4) + 4;
-		// 		var x = (i % 4) * 2 + (1-y%2)
-		// 		firebase.database().ref('pieces/').push({
-		// 			'color': 'white',
-		// 			'top':  (y * 70)+'px',
-		// 			'left': (x * 70)+'px',
-		// 			'x': x,
-		// 			'y': y
-		// 		});
-		// 	}
-		// }
 		return {
 			squares () {
 				return squares;
@@ -58,6 +25,10 @@ angular.module('app', [])
 		var choice2;
 		var jumpChoice1;
 		var jumpChoice2;
+		var jumpChoice3;
+		var jumpChoice4;
+		var player1Death;
+		var player2Death;
 		game.heading = "Checkers";
 		firebase.database().ref('board/').once('value').then((snap) => {
 			game.board = snap.val();
@@ -77,6 +48,10 @@ angular.module('app', [])
 			currentPiece = null;
 			choice1 = null;
 			choice2 = null;
+			jumpChoice1 = null;
+			jumpChoice2 = null;
+			jumpChoice3 = null;
+			jumpChoice4 = null;
 			$('.selected').removeClass('selected');
 		}
 
@@ -123,7 +98,7 @@ angular.module('app', [])
 					this.y = y + 2;
 				}
 
-				for (var key in game.board) {
+				for (let key in game.board) {
 					if(piece.x === game.board[key].y && piece.y === game.board[key].x) {
 						currentSquare = game.board[key];
 						var move1 = new Move1(currentSquare.x, currentSquare.y, currentSquare.index);
@@ -132,9 +107,9 @@ angular.module('app', [])
 						var jumpMove2 = new JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
 					}
 				}
-				for (var key in game.board) {
+				for (let key in game.board) {
 					if (move1.index === game.board[key].index) { //&& is empty
-						for (var i = 0; i<takenSquares.length; i++) {
+						for (let i = 0; i<takenSquares.length; i++) {
 							if(move1.x === takenSquares[i].y && move1.y === takenSquares[i].x) {
 							} else {
 								$(`#${key}`).toggleClass('selected');
@@ -142,7 +117,7 @@ angular.module('app', [])
 							}
 						}
 					} else if (move2.index === game.board[key].index) { //&& is empty
-						for (var i = 0; i<takenSquares.length; i++) {
+						for (let i = 0; i<takenSquares.length; i++) {
 							if(move2.x === takenSquares[i].y && move2.y === takenSquares[i].x) {
 							} else {
 								$(`#${key}`).toggleClass('selected');
@@ -151,9 +126,9 @@ angular.module('app', [])
 						}
 					}
 				}
-				for (var key in game.board) {
+				for (let key in game.board) {
 					if (jumpMove1.index === game.board[key].index) {
-						for(var i = 0; i<takenSquares.length; i++) {
+						for(let i = 0; i<takenSquares.length; i++) {
 							if(move1.x === takenSquares[i].y && move1.y === takenSquares[i].x) {
 								if(takenSquares[i].player === 'white') {
 									if (jumpMove1.x === takenSquares[i].y && jumpMove1.y === takenSquares[i].y) {
@@ -165,7 +140,7 @@ angular.module('app', [])
 							}
 						}
 					} else if (jumpMove2.index === game.board[key].index) {
-						for(var i = 0; i<takenSquares.length; i++) {
+						for(let i = 0; i<takenSquares.length; i++) {
 							if(move2.x === takenSquares[i].y && move2.y === takenSquares[i].x) {
 								if(takenSquares[i].player === 'white') {
 									// console.log(jumpMove2);
@@ -201,7 +176,7 @@ angular.module('app', [])
 					this.x = x - 2;
 					this.y = y + 2;
 				}
-				for (var key in game.board) {
+				for (let key in game.board) {
 					if(piece.x === game.board[key].y && piece.y === game.board[key].x) {
 						currentSquare = game.board[key];
 						var move1 = new Move1(currentSquare.x, currentSquare.y, currentSquare.index);
@@ -210,9 +185,9 @@ angular.module('app', [])
 						var jumpMove2 = new JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
 					}
 				}
-				for (var key in game.board) {
+				for (let key in game.board) {
 					if (move1.index === game.board[key].index) { //&& is empty
-						for (var i = 0; i<takenSquares.length; i++) {
+						for (let i = 0; i<takenSquares.length; i++) {
 							if(move1.x === takenSquares[i].y && move1.y === takenSquares[i].x) {
 							} else {
 								$(`#${key}`).toggleClass('selected');
@@ -220,7 +195,7 @@ angular.module('app', [])
 							}
 						}
 					} else if (move2.index === game.board[key].index) { //&& is empty
-						for (var i = 0; i<takenSquares.length; i++) {
+						for (let i = 0; i<takenSquares.length; i++) {
 							if(move2.x === takenSquares[i].y && move2.y === takenSquares[i].x) {
 							} else {
 								$(`#${key}`).toggleClass('selected');
@@ -229,28 +204,27 @@ angular.module('app', [])
 						}
 					}
 				}
-				for (var key in game.board) {
+				for (let key in game.board) {
 					if (jumpMove1.index === game.board[key].index) {
-						for(var i = 0; i<takenSquares.length; i++) {
+						for(let i = 0; i<takenSquares.length; i++) {
 							if(move1.x === takenSquares[i].y && move1.y === takenSquares[i].x) {
 								if(takenSquares[i].player === 'red') {
 									if (jumpMove1.x === takenSquares[i].y && jumpMove1.y === takenSquares[i].y) {
 									} else {
 										$(`#${key}`).toggleClass('selected');
-										jumpChoice1 = game.board[key];
+										jumpChoice3 = game.board[key];
 									}
 								}
 							}
 						}
 					} else if (jumpMove2.index === game.board[key].index) {
-						for(var i = 0; i<takenSquares.length; i++) {
+						for(let i = 0; i<takenSquares.length; i++) {
 							if(move2.x === takenSquares[i].y && move2.y === takenSquares[i].x) {
 								if(takenSquares[i].player === 'red') {
-									// console.log(jumpMove2);
 									if (jumpMove2.x === takenSquares[i].y && jumpMove2.y === takenSquares[i].y) {
 									} else {
 										$(`#${key}`).toggleClass('selected');
-										jumpChoice2 = game.board[key];
+										jumpChoice4 = game.board[key];
 									}
 								}
 							}
@@ -260,7 +234,7 @@ angular.module('app', [])
 			}
 		}
 		game.chooseSquare = (square) => {
-			if(square === choice1 || square === choice2 || square === jumpChoice1 || square === jumpChoice2) {
+			if(square === choice1 || square === choice2 || square === jumpChoice1 || square === jumpChoice2 || square === jumpChoice3 || square === jumpChoice4) {
 				var newTop = (square.x * 70) + 'px';
 				var newLeft = (square.y * 70) + 'px';
 				firebase.database().ref(`/pieces/${currentPiece.id}`).update({
@@ -269,6 +243,48 @@ angular.module('app', [])
 					y: square.x,
 					x: square.y
 				});
+				if (square === jumpChoice1) {
+					console.log(1);
+					var jumpSquareX = jumpChoice1.x - 1;
+					var jumpSquareY = jumpChoice1.y - 1;
+					for (let key in game.pieces) {
+						if (game.pieces[key].y === jumpSquareX && game.pieces[key].x === jumpSquareY) {
+							firebase.database().ref(`/pieces/${key}`).remove();
+							$timeout();
+							player2Death + 1;
+						}
+					}
+				} else if (square === jumpChoice2) {
+					var jumpSquareX = jumpChoice2.x - 1;
+					var jumpSquareY = jumpChoice2.y + 1;
+					for (let key in game.pieces) {
+						if (game.pieces[key].y === jumpSquareX && game.pieces[key].x === jumpSquareY) {
+							firebase.database().ref(`/pieces/${key}`).remove();
+							$timeout();
+							player2Death + 1;
+						}
+					}
+				} else if (square === jumpChoice3) {
+					var jumpSquareX = jumpChoice3.x + 1;
+					var jumpSquareY = jumpChoice3.y + 1;
+					for (let key in game.pieces) {
+						if (game.pieces[key].y === jumpSquareX && game.pieces[key].x === jumpSquareY) {
+							firebase.database().ref(`/pieces/${key}`).remove();
+							$timeout();
+							player1Death + 1;
+						}
+					}
+				} else if (square === jumpChoice4) {
+					var jumpSquareX = jumpChoice4.x + 1;
+					var jumpSquareY = jumpChoice4.y - 1;
+					for (let key in game.pieces) {
+						if (game.pieces[key].y === jumpSquareX && game.pieces[key].x === jumpSquareY) {
+							firebase.database().ref(`/pieces/${key}`).remove();
+							$timeout();
+							player1Death + 1;
+						}
+					}
+				}
 				removeSelected();
 			}
 		}
@@ -276,7 +292,7 @@ angular.module('app', [])
 		game.reset = () => {
 			firebase.database().ref('/pieces/').remove();
 			var pieceCount = 16;
-			for(var i=0; i<pieceCount; i++) {
+			for(let i=0; i<pieceCount; i++) {
 				if (i < pieceCount/2) {
 					// player 1
 					var y = Math.floor(i / 4);
