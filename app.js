@@ -92,8 +92,6 @@ angular.module('app', [])
 				for (let key in game.board) {
 					if(piece.x === game.board[key].y && piece.y === game.board[key].x) {
 						currentSquare = game.board[key];
-
-
 					}
 				}
 				for (let key in game.board) {
@@ -103,7 +101,6 @@ angular.module('app', [])
 						for (let i = 0; i<takenSquares.length; i++) {
 							if(move1.x === takenSquares[i].y && move1.y === takenSquares[i].x) {
 							} else {
-								$(`#${key}`).toggleClass('selected');
 								choice1 = game.board[key];
 							}
 						}
@@ -111,7 +108,6 @@ angular.module('app', [])
 						for (let i = 0; i<takenSquares.length; i++) {
 							if(move2.x === takenSquares[i].y && move2.y === takenSquares[i].x) {
 							} else {
-								$(`#${key}`).toggleClass('selected');
 								choice2 = game.board[key];
 							}
 						}
@@ -126,7 +122,6 @@ angular.module('app', [])
 								if(takenSquares[i].player === 'white') {
 									if (jumpMove1.x === takenSquares[i].y && jumpMove1.y === takenSquares[i].y) {
 									} else {
-										$(`#${key}`).toggleClass('selected');
 										jumpChoice1 = game.board[key];
 									}
 								}
@@ -139,7 +134,6 @@ angular.module('app', [])
 									// console.log(jumpMove2);
 									if (jumpMove2.x === takenSquares[i].y && jumpMove2.y === takenSquares[i].y) {
 									} else {
-										$(`#${key}`).toggleClass('selected');
 										jumpChoice2 = game.board[key];
 									}
 								}
@@ -147,7 +141,7 @@ angular.module('app', [])
 						}
 					}
 				}
-			} else {
+			} else if (piece.color === 'white') {
 				// player 2
 				function Move1 (x,y, index) {
 					this.index = index - 9;
@@ -183,7 +177,6 @@ angular.module('app', [])
 						for (let i = 0; i<takenSquares.length; i++) {
 							if(move1.x === takenSquares[i].y && move1.y === takenSquares[i].x) {
 							} else {
-								$(`#${key}`).toggleClass('selected');
 								choice1 = game.board[key];
 							}
 						}
@@ -191,7 +184,6 @@ angular.module('app', [])
 						for (let i = 0; i<takenSquares.length; i++) {
 							if(move2.x === takenSquares[i].y && move2.y === takenSquares[i].x) {
 							} else {
-								$(`#${key}`).toggleClass('selected');
 								choice2 = game.board[key];
 							}
 						}
@@ -206,7 +198,6 @@ angular.module('app', [])
 								if(takenSquares[i].player === 'red') {
 									if (jumpMove1.x === takenSquares[i].y && jumpMove1.y === takenSquares[i].y) {
 									} else {
-										$(`#${key}`).toggleClass('selected');
 										jumpChoice3 = game.board[key];
 									}
 								}
@@ -218,7 +209,6 @@ angular.module('app', [])
 								if(takenSquares[i].player === 'red') {
 									if (jumpMove2.x === takenSquares[i].y && jumpMove2.y === takenSquares[i].y) {
 									} else {
-										$(`#${key}`).toggleClass('selected');
 										jumpChoice4 = game.board[key];
 									}
 								}
@@ -238,6 +228,18 @@ angular.module('app', [])
 					y: square.x,
 					x: square.y
 				});
+				if (currentPiece.color === 'red' && square.x === 7) {
+					firebase.database().ref(`/pieces/${currentPiece.id}`).update({
+						king: true
+					});
+				}
+				if (currentPiece.color === 'white' && square.x === 0) {
+					firebase.database().ref(`/pieces/${currentPiece.id}`).update({
+						king: true
+					});
+				}
+
+
 				if (square === jumpChoice1) {
 					console.log(1);
 					let jumpSquareX = jumpChoice1.x - 1;
@@ -246,7 +248,7 @@ angular.module('app', [])
 						if (game.pieces[key].y === jumpSquareX && game.pieces[key].x === jumpSquareY) {
 							firebase.database().ref(`/pieces/${key}`).remove();
 							$timeout();
-							player2Death + 1;
+							player2Death += 1;
 						}
 					}
 				} else if (square === jumpChoice2) {
@@ -256,7 +258,7 @@ angular.module('app', [])
 						if (game.pieces[key].y === jumpSquareX && game.pieces[key].x === jumpSquareY) {
 							firebase.database().ref(`/pieces/${key}`).remove();
 							$timeout();
-							player2Death + 1;
+							player2Death += 1;
 						}
 					}
 				} else if (square === jumpChoice3) {
@@ -266,7 +268,7 @@ angular.module('app', [])
 						if (game.pieces[key].y === jumpSquareX && game.pieces[key].x === jumpSquareY) {
 							firebase.database().ref(`/pieces/${key}`).remove();
 							$timeout();
-							player1Death + 1;
+							player1Death += 1;
 						}
 					}
 				} else if (square === jumpChoice4) {
@@ -276,7 +278,7 @@ angular.module('app', [])
 						if (game.pieces[key].y === jumpSquareX && game.pieces[key].x === jumpSquareY) {
 							firebase.database().ref(`/pieces/${key}`).remove();
 							$timeout();
-							player1Death + 1;
+							player1Death += 1;
 						}
 					}
 				}
@@ -297,7 +299,8 @@ angular.module('app', [])
 						'top':  (y * 70)+'px',
 						'left': (x * 70)+'px',
 						'x': x,
-						'y': y
+						'y': y,
+						'king': false
 					});
 				}	else {
 					// player 2
@@ -308,7 +311,8 @@ angular.module('app', [])
 						'top':  (y * 70)+'px',
 						'left': (x * 70)+'px',
 						'x': x,
-						'y': y
+						'y': y,
+						'king': false
 					});
 				}
 			}

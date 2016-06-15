@@ -45,4 +45,8 @@ body {
 div {
 	color:white;
 }
+.king {
+	background-image: url("crown.jpg");
+	background-repeat: no-repeat;
+}
 

@@ -11,10 +11,21 @@
 		<div ng-controller="GameCtrl as game">
 			<div id="game">
 				<div id="board">
-					<div ng-repeat="(id,square) in game.board" class="square" ng-class="game.chckBrd(square.x, square.y) ? 'squareBlack' : 'square'" id="{{id}}" ng-click="game.chooseSquare(square)">{{square.x}}, {{square.y}}
+					<div
+						ng-repeat="(id,square) in game.board"
+						class="square" id="{{id}}"
+						ng-class="game.chckBrd(square.x, square.y) ? 'squareBlack' : 'square'"
+						ng-click="game.chooseSquare(square)">{{square.x}}, {{square.y}}
 					</div>
 					<div id="pieces">
-						<div ng-repeat="(id,piece) in game.pieces" class="{{piece.color}}" id="{{id}}" ng-style="{'top': piece.top, 'left': piece.left}" ng-click="game.choosePiece($event, piece, id)">
+						<div
+							ng-repeat="(id,piece) in game.pieces"
+							class="{{piece.color}}" id="{{id}}"
+							ng-style="{'top': piece.top, 'left': piece.left}"
+							ng-click="game.choosePiece($event, piece, id)"
+							ng-class="piece.king ? 'king': 'none'"
+							>
+
 						</div>
 					</div>
 				</div>
