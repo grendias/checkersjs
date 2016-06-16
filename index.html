@@ -12,8 +12,8 @@
 			<div id="game">
 				<div id="board">
 					<div
-						ng-repeat="(id,square) in game.board"
-						class="square" id="{{id}}"
+						ng-repeat="square in game.board"
+						class="square" id="{{index}}"
 						ng-class="game.chckBrd(square.x, square.y) ? 'squareBlack' : 'square'"
 						ng-click="game.chooseSquare(square)">{{square.x}}, {{square.y}}
 					</div>
@@ -21,11 +21,13 @@
 						<div
 							ng-repeat="(id,piece) in game.pieces"
 							class="{{piece.color}}" id="{{id}}"
-							ng-style="{'top': piece.top, 'left': piece.left}"
+							ng-style="{
+								'top': piece.top,
+								'left': piece.left
+							}"
 							ng-click="piece.king ? game.chooseKing($event, piece, id) : piece.player1 ? game.choosePiecePlayer1($event, piece, id) : game.choosePiecePlayer2($event, piece, id)"
 							ng-class="piece.king ? 'king': 'none'"
 							>
-
 						</div>
 					</div>
 				</div>

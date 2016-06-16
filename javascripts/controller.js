@@ -1,6 +1,6 @@
 "use strict";
 angular.module('app')
-.controller('GameCtrl', function ($timeout, $animate) {
+.controller('GameCtrl', function ($timeout, BoardFact) {
 		const game = this;
 		var currentPiece;
 		var choice1;
@@ -14,10 +14,11 @@ angular.module('app')
 		var player1Death = 0;
 		var player2Death = 0;
 		game.heading = "Checkers";
-		firebase.database().ref('board/').once('value').then((snap) => {
-			game.board = snap.val();
-			$timeout();
-		});
+		game.board = BoardFact.squares();
+		// firebase.database().ref('board/').once('value').then((snap) => {
+		// 	game.board = snap.val();
+		// 	$timeout();
+		// });
 		firebase.database().ref('pieces/').on('value', (snap) => {
 			game.pieces = snap.val();
 			$timeout();
@@ -405,6 +406,7 @@ angular.module('app')
 					y: square.x,
 					x: square.y
 				});
+				$(`#${currentPiece.id}`).animate({top: newTop, left: newLeft}, "slide");
 				if (currentPiece.color === 'red' && square.x === 7) {
 					firebase.database().ref(`/pieces/${currentPiece.id}`).update({
 						king: true
