@@ -1,7 +1,8 @@
 "use strict";
 angular.module('app')
-.controller('GameCtrl', function ($timeout, BoardFact) {
+	.controller('GameCtrl', function ($timeout, BoardFact, $routeParams) {
 		const game = this;
+		const gameId = $routeParams.gameid;
 		var currentPiece;
 		var choice1;
 		var choice2;
@@ -14,15 +15,18 @@ angular.module('app')
 		var player1Death = 0;
 		var player2Death = 0;
 		game.heading = "Checkers";
+		game.pieces = {};
 		game.board = BoardFact.squares();
 		// firebase.database().ref('board/').once('value').then((snap) => {
 		// 	game.board = snap.val();
 		// 	$timeout();
 		// });
-		firebase.database().ref('pieces/').on('value', (snap) => {
+
+		firebase.database().ref(`${gameId}/`).on('value', (snap) => {
 			game.pieces = snap.val();
 			$timeout();
 		});
+
 		game.chckBrd = (x, y) => {
 			var oddX = x % 2;
 			var oddY = y % 2;
@@ -400,34 +404,39 @@ angular.module('app')
 			if(square === choice1 || square === choice2 || square === choice3 || square === choice4 || square === jumpChoice1 || square === jumpChoice2 || square === jumpChoice3 || square === jumpChoice4) {
 				var newTop = (square.x * 70) + 'px';
 				var newLeft = (square.y * 70) + 'px';
-				firebase.database().ref(`/pieces/${currentPiece.id}`).update({
+				firebase.database().ref(`/${gameId}/${currentPiece.id}`).update({
 					top: newTop,
 					left: newLeft,
 					y: square.x,
 					x: square.y
 				});
+				$timeout();
 				$(`#${currentPiece.id}`).animate({top: newTop, left: newLeft}, "slide");
 				if (currentPiece.color === 'red' && square.x === 7) {
-					firebase.database().ref(`/pieces/${currentPiece.id}`).update({
+					firebase.database().ref(`/${gameId}/${currentPiece.id}`).update({
 						king: true
 					});
+					$timeout();
 				}
 				if (currentPiece.color === 'white' && square.x === 0) {
-					firebase.database().ref(`/pieces/${currentPiece.id}`).update({
+					firebase.database().ref(`/${gameId}/${currentPiece.id}`).update({
 						king: true
 					});
+					$timeout();
 				}
 				if (square === jumpChoice1) {
 					let jumpSquareX = jumpChoice1.x - 1;
 					let jumpSquareY = jumpChoice1.y - 1;
 					for (let key in game.pieces) {
 						if (game.pieces[key].y === jumpSquareX && game.pieces[key].x === jumpSquareY) {
-							firebase.database().ref(`/pieces/${key}`).remove();
+							firebase.database().ref(`/${gameId}/${key}`).remove();
 							$timeout();
 							if (currentPiece.color === 'red') {
 								player2Death += 1;
+								console.log(player2Death);
 							} else {
 								player1Death +=1;
+								console.log(player1Death);
 							}
 						}
 					}
@@ -436,12 +445,14 @@ angular.module('app')
 					let jumpSquareY = jumpChoice2.y + 1;
 					for (let key in game.pieces) {
 						if (game.pieces[key].y === jumpSquareX && game.pieces[key].x === jumpSquareY) {
-							firebase.database().ref(`/pieces/${key}`).remove();
+							firebase.database().ref(`/${gameId}/${key}`).remove();
 							$timeout();
 							if (currentPiece.color === 'red') {
 								player2Death += 1;
+								console.log(player2Death);
 							} else {
 								player1Death +=1;
+								console.log(player1Death);
 							}
 						}
 					}
@@ -450,12 +461,14 @@ angular.module('app')
 					let jumpSquareY = jumpChoice3.y + 1;
 					for (let key in game.pieces) {
 						if (game.pieces[key].y === jumpSquareX && game.pieces[key].x === jumpSquareY) {
-							firebase.database().ref(`/pieces/${key}`).remove();
+							firebase.database().ref(`/${gameId}/${key}`).remove();
 							$timeout();
 							if (currentPiece.color === 'red') {
 								player2Death += 1;
+								console.log(player2Death);
 							} else {
 								player1Death +=1;
+								console.log(player1Death);
 							}
 						}
 					}
@@ -464,12 +477,14 @@ angular.module('app')
 					let jumpSquareY = jumpChoice4.y - 1;
 					for (let key in game.pieces) {
 						if (game.pieces[key].y === jumpSquareX && game.pieces[key].x === jumpSquareY) {
-							firebase.database().ref(`/pieces/${key}`).remove();
+							firebase.database().ref(`/${gameId}/${key}`).remove();
 							$timeout();
 							if (currentPiece.color === 'red') {
 								player2Death += 1;
+								console.log(player2Death);
 							} else {
 								player1Death +=1;
+								console.log(player1Death);
 							}
 						}
 					}
