@@ -30,16 +30,21 @@ angular.module('app')
 			$timeout();
 		});
 
+		if(game.player1Id === firebase.auth().currentUser.uid) {
+			game.playerEmail = firebase.auth().currentUser.email;
+			game.playerColor = 'red';
+			game.player = '1';
+		} else if (game.player2Id === firebase.auth().currentUser.uid) {
+			game.playerEmail = firebase.auth().currentUser.email;
+			game.playerColor = 'white';
+			game.player = '2';
+		}
+
 		game.chckBrd = (x, y) => {
 			var oddX = x % 2;
 			var oddY = y % 2;
 			return (oddX ^ oddY);
 		};
-		// function getUser () {
-		// 	var user = firebase.auth().currentUser;
-		// 	$timeout();
-		// 	userId = user.uid;
-		// }
 
 		function removeSelected () {
 			currentPiece = null;
