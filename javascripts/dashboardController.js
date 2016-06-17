@@ -10,7 +10,8 @@ angular.module('app').controller('DashboardCtrl', function ($timeout, AuthFactor
 	dash.newGame = () => {
 		firebase.database().ref('games/').push({
 			player1: uid,
-			test: 'testgame'
+			test: 'testgame',
+			turn: uid
 		});
 		for (let key in dash.games) {
 			if (dash.games[key].player1 === uid) {

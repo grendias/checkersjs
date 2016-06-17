@@ -1,5 +1,5 @@
 <div id="game">
-	<div id="board">
+	<div id="board" ng-class="game.toggleTurn() ? 'none' : 'disabled'">
 		<div
 			ng-repeat="square in game.board"
 			class="square" id="{{index}}"

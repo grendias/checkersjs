@@ -42,10 +42,6 @@ body {
 .selected {
 	box-shadow: 0px 0px 5px 5px green;
 }
-/*
-div {
-
-}*/
 
 .king {
 	background-image: url("crown.png");
@@ -61,6 +57,10 @@ div {
 
 .closed {
 	cursor: not-allowed;
+}
 
+.disabled {
+	pointer-events: none;
+	background: rgba(0, 0, 0, .5);
 }
 
