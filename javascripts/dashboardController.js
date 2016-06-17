@@ -11,7 +11,9 @@ angular.module('app').controller('DashboardCtrl', function ($timeout, AuthFactor
 		firebase.database().ref('games/').push({
 			player1: uid,
 			test: 'testgame',
-			turn: uid
+			turn: uid,
+			player1Death: 0,
+			player2Death: 0
 		});
 		for (let key in dash.games) {
 			if (dash.games[key].player1 === uid) {
@@ -31,7 +33,6 @@ angular.module('app').controller('DashboardCtrl', function ($timeout, AuthFactor
 						'player1': true
 					});
 				}
-				console.log(key);
 				$location.path(`/checkers/${key}`);
 			}
 		}
@@ -59,5 +60,9 @@ angular.module('app').controller('DashboardCtrl', function ($timeout, AuthFactor
 			});
 		}
 		$location.path(`checkers/${gameId}`);
+	};
+
+	dash.logOut = () => {
+		firebase.auth().signOut();
 	};
 });

@@ -1,4 +1,15 @@
 <div id="game">
+	<div
+		class="results ng-hide"
+		ng-show="game.player1Death === 8 || game.player2Death === 8">winner
+		<p ng-show="game.player1Death === 8" class="ng-hide">Player 2 wins</p>
+		<p ng-show="game.player2Death === 8" class="ng-hide"> Player 1 Wins</p>
+		<button type="button" ng-click="game.reset()">Play Again?</button>
+	</div>
+	<div>
+		<button type="button" ng-click="game.leaveGame()">Leave Game</button>
+		<button type="submit" ng-click="game.logOut()">Logout</button>
+	</div>
 	<div id="board" ng-class="game.toggleTurn() ? 'none' : 'disabled'">
 		<div
 			ng-repeat="square in game.board"

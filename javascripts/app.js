@@ -29,7 +29,20 @@ angular.module('app', ['ngRoute'])
 		};
 		firebase.initializeApp(config);
 	})
-	.factory('AuthFactory', () => {
+	.factory('AuthFactory', ($location, $timeout) => {
+		firebase.auth().onAuthStateChanged((user) => {
+		if (user) {
+			firebase.database().ref(`/users/${user.uid}`).set({
+				email: user.email,
+				name: user.displayName
+			});
+			$location.path(`/dashboard/${user.uid}`);
+			$timeout();
+		} else {
+			$location.path('/');
+			$timeout();
+		}
+	});
 		return {
 			login (email, password) {
 				firebase.auth().signInWithEmailAndPassword(email, password);

@@ -1,19 +1,17 @@
 "use strict";
 angular.module('app')
-	.controller('GameCtrl', function ($timeout, BoardFact, $routeParams) {
+	.controller('GameCtrl', function ($timeout, BoardFact, $routeParams, $location) {
 		const game = this;
 		const gameId = $routeParams.gameid;
-		var currentPiece;
-		var choice1;
-		var choice2;
-		var choice3;
-		var choice4;
-		var jumpChoice1;
-		var jumpChoice2;
-		var jumpChoice3;
-		var jumpChoice4;
-		var player1Death = 0;
-		var player2Death = 0;
+		var currentPiece,
+				choice1,
+				choice2,
+				choice3,
+				choice4,
+				jumpChoice1,
+				jumpChoice2,
+				jumpChoice3,
+				jumpChoice4;
 		game.heading = "Checkers";
 		game.pieces = {};
 		game.board = BoardFact.squares();
@@ -22,6 +20,8 @@ angular.module('app')
 			game.turn = snap.val().turn;
 			game.player1Id = snap.val().player1;
 			game.player2Id = snap.val().player2;
+			game.player1Death = snap.val().player1Death;
+			game.player2Death = snap.val().player2Death;
 			$timeout();
 		});
 
@@ -57,7 +57,6 @@ angular.module('app')
 
 		game.toggleTurn = () => {
 			if (game.turn === firebase.auth().currentUser.uid) {
-				console.log(firebase.auth().currentUser.uid);
 				return true;
 			}
 		};
@@ -457,11 +456,13 @@ angular.module('app')
 							firebase.database().ref(`/${gameId}/${key}`).remove();
 							$timeout();
 							if (currentPiece.color === 'red') {
-								player2Death += 1;
-								console.log(player2Death);
+								firebase.database().ref(`games/${gameId}/`).update({
+									player2Death: game.player2Death + 1
+								});
 							} else {
-								player1Death +=1;
-								console.log(player1Death);
+								firebase.database().ref(`games/${gameId}/`).update({
+									player1Death: game.player1Death + 1
+								});
 							}
 						}
 					}
@@ -473,11 +474,13 @@ angular.module('app')
 							firebase.database().ref(`/${gameId}/${key}`).remove();
 							$timeout();
 							if (currentPiece.color === 'red') {
-								player2Death += 1;
-								console.log(player2Death);
+								firebase.database().ref(`games/${gameId}/`).update({
+									player2Death: game.player2Death + 1
+								});
 							} else {
-								player1Death +=1;
-								console.log(player1Death);
+								firebase.database().ref(`games/${gameId}/`).update({
+									player1Death: game.player1Death + 1
+								});
 							}
 						}
 					}
@@ -489,11 +492,13 @@ angular.module('app')
 							firebase.database().ref(`/${gameId}/${key}`).remove();
 							$timeout();
 							if (currentPiece.color === 'red') {
-								player2Death += 1;
-								console.log(player2Death);
+								firebase.database().ref(`games/${gameId}/`).update({
+									player2Death: game.player2Death + 1
+								});
 							} else {
-								player1Death +=1;
-								console.log(player1Death);
+								firebase.database().ref(`games/${gameId}/`).update({
+									player1Death: game.player1Death + 1
+								});
 							}
 						}
 					}
@@ -505,42 +510,42 @@ angular.module('app')
 							firebase.database().ref(`/${gameId}/${key}`).remove();
 							$timeout();
 							if (currentPiece.color === 'red') {
-								player2Death += 1;
-								console.log(player2Death);
+								firebase.database().ref(`games/${gameId}/`).update({
+									player2Death: game.player2Death + 1
+								});
 							} else {
-								player1Death +=1;
-								console.log(player1Death);
+								firebase.database().ref(`games/${gameId}/`).update({
+									player1Death: game.player1Death + 1
+								});
 							}
 						}
 					}
 				}
-				if (player1Death === 8) {
-					console.log("player 2 wins");
-				} else if (player2Death === 8) {
-					console.log('player 1 wins');
+				if (game.turn === game.player1Id) {
+					firebase.database().ref(`games/${gameId}/`).update({
+						turn: game.player2Id
+					});
+				} else if (game.turn === game.player2Id) {
+					firebase.database().ref(`games/${gameId}/`).update({
+						turn: game.player1Id
+					});
 				}
-			if(game.turn === game.player1Id) {
-				firebase.database().ref(`games/${gameId}/`).update({
-					turn: game.player2Id
-				});
-			} else if (game.turn === game.player2Id) {
-				firebase.database().ref(`games/${gameId}/`).update({
-					turn: game.player1Id
-				});
-			}
 				removeSelected();
 			}
 		};
 
+
 		game.reset = () => {
-			firebase.database().ref('/pieces/').remove();
+			firebase.database().ref(`/${gameId}/`).remove();
 			var pieceCount = 16;
 			for(let i=0; i<pieceCount; i++) {
 				if (i < pieceCount/2) {
 					// player 1
 					let y = Math.floor(i / 4);
 					let x = (i % 4) * 2 + (1 - y%2);
-					firebase.database().ref('/pieces/').push({
+					firebase.database().ref(`/${gameId}/`).push({
+						'gameId': gameId,
+						'userid': game.player1Id,
 						'color': 'red',
 						'top':  (y * 70)+'px',
 						'left': (x * 70)+'px',
@@ -551,9 +556,11 @@ angular.module('app')
 					});
 				}	else {
 					// player 2
-					let y = Math.floor(i/4) + 4;
-					let x = (i % 4) * 2 + (1-y%2);
-					firebase.database().ref('pieces/').push({
+					let y = Math.floor(i / 4) + 4;
+					let x = (i % 4) * 2 + (1 - y % 2);
+					firebase.database().ref(`/${gameId}/`).push({
+						'gameId': gameId,
+						'userid': game.player2Id,
 						'color': 'white',
 						'top':  (y * 70)+'px',
 						'left': (x * 70)+'px',
@@ -564,8 +571,25 @@ angular.module('app')
 					});
 				}
 			}
+			firebase.database().ref(`games/${gameId}/`).update({
+				player1Death: 0,
+				player2Death: 0
+			});
 			removeSelected();
-			player2Death = 0;
-			player1Death = 0;
 		};
+
+	game.leaveGame = () => {
+		for (let key in game.pieces) {
+			if (game.pieces[key].userid === firebase.auth().currentUser.uid) {
+				firebase.database().ref(`/${gameId}/${key}`).remove();
+			}
+		}
+		firebase.database().ref(`games/${gameId}`).remove();
+		$location.path(`/dashboard/${firebase.auth().currentUser.uid}`);
+	};
+
+	game.logOut = () => {
+		firebase.auth().signOut();
+	};
+
 	});
