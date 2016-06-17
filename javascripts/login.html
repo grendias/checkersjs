@@ -1,0 +1,38 @@
+<div>
+	<h1>{{log.heading}}</h1>
+	<form>
+		<div>
+			<label for="name">If new user enter name</label>
+			<div>
+				<input
+					type="text"
+					id="email"
+					ng-model="log.user.name">
+			</div>
+			<label for="email" >Email</label>
+			<div class="col-sm-10">
+				<input
+					type="email"
+					id="email"
+					required
+					ng-model="log.user.email">
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="password">Password</label>
+			<div class="col-sm-10">
+				<input
+					type="password"
+					id="password"
+					required
+					ng-model="log.user.password">
+			</div>
+		</div>
+		<div>
+			<div>
+				<button ng-click="log.register()">Register</button>
+				<button ng-click="log.login()">Login</button>
+			</div>
+		</div>
+	</form>
+</div>
