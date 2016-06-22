@@ -34,7 +34,6 @@ angular.module('app', ['ngRoute'])
 		if (user) {
 			firebase.database().ref(`/users/${user.uid}`).set({
 				email: user.email,
-				name: user.displayName
 			});
 			$location.path(`/dashboard/${user.uid}`);
 			$timeout();
@@ -53,5 +52,12 @@ angular.module('app', ['ngRoute'])
 			register (email, password) {
 				firebase.auth().createUserWithEmailAndPassword(email, password);
 			}
+		};
+	})
+	.factory('UsersFact', () => {
+		const currentUser = firebase.auth().currentUser;
+		return {
+			userId: currentUser.uid,
+			userEmail: currentUser.email
 		};
 	});

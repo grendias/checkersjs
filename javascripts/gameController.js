@@ -1,8 +1,10 @@
 "use strict";
 angular.module('app')
-	.controller('GameCtrl', function ($timeout, BoardFact, $routeParams, $location) {
+	.controller('GameCtrl', function ($timeout, BoardFact, $routeParams, $location, UsersFact) {
 		const game = this;
 		const gameId = $routeParams.gameid;
+		const userId = UsersFact.userId;
+		const userEmail = UsersFact.userEmail;
 		var currentPiece,
 				choice1,
 				choice2,
@@ -14,6 +16,7 @@ angular.module('app')
 				jumpChoice4;
 		game.heading = "Checkers";
 		game.pieces = {};
+		game.messages = {};
 		game.board = BoardFact.squares();
 
 		firebase.database().ref(`games/${gameId}/`).on('value', (snap) => {
@@ -30,12 +33,22 @@ angular.module('app')
 			$timeout();
 		});
 
-		if(game.player1Id === firebase.auth().currentUser.uid) {
-			game.playerEmail = firebase.auth().currentUser.email;
+		firebase.database().ref('messages/').on('value', (snap) => {
+			for (let key in snap.val()) {
+				if (snap.val()[key].gameId === gameId) {
+					game.messages[key] = snap.val()[key];
+					$timeout();
+				}
+			}
+
+		});
+
+		if(game.player1Id === userId) {
+			game.playerEmail = userEmail;
 			game.playerColor = 'red';
 			game.player = '1';
-		} else if (game.player2Id === firebase.auth().currentUser.uid) {
-			game.playerEmail = firebase.auth().currentUser.email;
+		} else if (game.player2Id === userId) {
+			game.playerEmail = userEmail;
 			game.playerColor = 'white';
 			game.player = '2';
 		}
@@ -61,7 +74,7 @@ angular.module('app')
 
 
 		game.toggleTurn = () => {
-			if (game.turn === firebase.auth().currentUser.uid) {
+			if (game.turn === userId) {
 				return true;
 			}
 		};
@@ -567,8 +580,8 @@ angular.module('app')
 						'gameId': gameId,
 						'userid': game.player2Id,
 						'color': 'white',
-						'top':  (y * 70)+'px',
-						'left': (x * 70)+'px',
+						'top':  (y * 70) + 'px',
+						'left': (x * 70) + 'px',
 						'x': x,
 						'y': y,
 						'king': false,
@@ -583,18 +596,27 @@ angular.module('app')
 			removeSelected();
 		};
 
-	game.leaveGame = () => {
-		for (let key in game.pieces) {
-			if (game.pieces[key].userid === firebase.auth().currentUser.uid) {
-				firebase.database().ref(`/${gameId}/${key}`).remove();
+		game.leaveGame = () => {
+			firebase.database().ref(`games/${gameId}`).remove();
+			for (let key in game.pieces) {
+				if (game.pieces[key].userid === firebase.auth().currentUser.uid) {
+					firebase.database().ref(`/${gameId}/${key}`).remove();
+				}
 			}
-		}
-		firebase.database().ref(`games/${gameId}`).remove();
-		$location.path(`/dashboard/${firebase.auth().currentUser.uid}`);
-	};
+			$location.path(`/dashboard/${userId}`);
+		};
 
-	game.logOut = () => {
-		firebase.auth().signOut();
-	};
+		game.logOut = () => {
+			firebase.auth().signOut();
+		};
+
+		game.submitMessage = () => {
+			firebase.database().ref('messages/').push({
+				'gameId': gameId,
+				'userEmail': userEmail,
+				'userMessage': game.message
+			});
+			game.message = '';
+		};
 
 	});
