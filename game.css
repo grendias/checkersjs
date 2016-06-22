@@ -44,7 +44,7 @@ body {
 }
 
 .king {
-	background-image: url("crown.png");
+	background-image: url("img/crown.png");
 	background-repeat: no-repeat;
 	background-position: center;
 }
