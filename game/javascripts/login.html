@@ -1,38 +1,35 @@
-<div>
-	<h1>{{log.heading}}</h1>
-	<form>
-		<div>
-			<label for="name">If new user enter name</label>
-			<div>
-				<input
-					type="text"
-					id="email"
-					ng-model="log.user.name">
+<div class="container-fluid loginContainer">
+	<div class="row">
+		<h1 class="col-sm-offset-2 col-sm-10 loginHead">{{log.heading}}</h1>
+		<form class="form-horizontal">
+			<div class="form-group">
+				<label for="email" class="col-sm-2 control-label loginLabel">Email</label>
+				<div class="col-sm-10 loginInput">
+					<input
+						type="email"
+						id="email"
+						required
+						ng-model="log.user.email"
+						class="form-control">
+				</div>
 			</div>
-			<label for="email" >Email</label>
-			<div class="col-sm-10">
-				<input
-					type="email"
-					id="email"
-					required
-					ng-model="log.user.email">
+			<div class="form-group">
+				<label for="password" class="col-sm-2 control-label loginLabel">Password</label>
+				<div class="col-sm-10 loginInput">
+					<input
+						type="password"
+						id="password"
+						required
+						ng-model="log.user.password"
+						class="form-control">
+				</div>
 			</div>
-		</div>
-		<div class="form-group">
-			<label for="password">Password</label>
-			<div class="col-sm-10">
-				<input
-					type="password"
-					id="password"
-					required
-					ng-model="log.user.password">
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-10">
+					<button type="submit" ng-click="log.register()" class="btn btn-default loginBtn">Register</button>
+					<button type="submit" ng-click="log.login()" class="btn btn-default loginBtn">Login</button>
+				</div>
 			</div>
-		</div>
-		<div>
-			<div>
-				<button ng-click="log.register()">Register</button>
-				<button ng-click="log.login()">Login</button>
-			</div>
-		</div>
-	</form>
+		</form>
+	</div>
 </div>

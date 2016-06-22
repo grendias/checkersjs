@@ -1,10 +1,47 @@
+@import 'https://fonts.googleapis.com/css?family=Playball';
 body {
-  margin: 0; }
+  margin: 0;
+  background-image: url("img/background.jpg"); }
+
+.loginContainer {
+  width: 75%;
+  color: #e5fa99;
+  font: 100% "Playball", cursive;
+  border: 5px solid #e5fa99;
+  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3));
+  margin-top: 15em; }
+
+.loginHead {
+  padding: 0; }
+
+.loginBtn {
+  background-color: #825d4d;
+  color: #e5fa99;
+  font-size: 1.5em; }
+
+.loginBtn:hover {
+  background-color: #e5fa99;
+  color: #825d4d; }
+
+.loginInput {
+  width: 80%;
+  margin-left: 0.5em; }
+
+.loginLabel {
+  font-size: 2em; }
+
+.dashGame {
+  width: 100px;
+  height: 150px;
+  border: 1px solid black; }
+
+.closed {
+  cursor: not-allowed; }
 
 #board {
   height: 560px;
   width: 560px;
-  border: 1px solid black;
+  border: 1px solid #000;
   margin: 10px 10px;
   position: relative; }
 
@@ -15,7 +52,7 @@ body {
   color: white; }
 
 .squareBlack {
-  background: black; }
+  background: #000; }
 
 .red {
   border-radius: 100%;
@@ -30,7 +67,7 @@ body {
   height: 60px;
   width: 60px;
   margin: 5px;
-  background-color: white;
+  background-color: #fff;
   position: absolute; }
 
 .selected {
@@ -40,14 +77,6 @@ body {
   background-image: url("img/crown.png");
   background-repeat: no-repeat;
   background-position: center; }
-
-.dashGame {
-  width: 100px;
-  height: 150px;
-  border: 1px solid black; }
-
-.closed {
-  cursor: not-allowed; }
 
 .disabled {
   pointer-events: none;
