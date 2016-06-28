@@ -4,6 +4,9 @@ body {
   background-image: url("img/background.jpg");
   color: #e5fa99; }
 
+.formControl {
+  border-radius: 0px; }
+
 .loginContainer {
   width: 75%;
   color: #e5fa99;
@@ -15,13 +18,13 @@ body {
 .loginHead {
   padding: 0; }
 
-.loginBtn, .dashLogout {
+.loginBtn, .dashLogout, .gameBtn {
   background-color: #825d4d;
   color: #e5fa99;
   font-size: 1.5em;
   border-radius: 0; }
 
-.loginBtn:hover, .dashLogout:hover {
+.loginBtn:hover, .dashLogout:hover, .gameBtn:hover {
   background-color: #e5fa99;
   color: #825d4d; }
 
@@ -52,44 +55,109 @@ body {
   width: 560px;
   border: 1px solid #000;
   margin: 10px 10px;
-  position: relative; }
+  position: relative;
+  padding: 0; }
 
 .square {
   height: 70px;
   width: 70px;
   float: left;
-  color: white; }
+  background-image: url("img/white.jpg"); }
 
 .squareBlack {
-  background: #000; }
+  height: 70px;
+  width: 70px;
+  float: left;
+  background: #000;
+  background-image: url("img/black.jpeg"); }
 
-.red {
-  border-radius: 100%;
-  height: 60px;
+.hide {
+  display: none; }
+
+.disabled {
+  display: block;
+  position: absolute;
+  width: 560px;
+  height: 560px;
+  pointer-events: none;
+  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)); }
+
+.messageArea {
+  position: relative; }
+
+.messageBoard {
+  height: 560px;
+  width: 100%;
+  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)); }
+
+.messageInput {
+  position: absolute;
+  bottom: -40px; }
+
+.piece {
+  cursor: pointer;
   width: 60px;
+  height: 60px;
+  position: absolute;
   margin: 5px;
-  background-color: red;
-  position: absolute; }
+  border-radius: 100%;
+  box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.1); }
+
+.piece:after {
+  content: "";
+  width: 48px;
+  height: 48px;
+  top: 4px;
+  left: 4px;
+  position: absolute;
+  border-radius: 100%; }
+
+.piece:before {
+  content: "";
+  width: 58px;
+  height: 58px;
+  position: absolute;
+  border-radius: 100%; }
 
 .white {
-  border-radius: 100%;
-  height: 60px;
-  width: 60px;
-  margin: 5px;
-  background-color: #fff;
-  position: absolute; }
+  background: linear-gradient(45deg, #a0a0a0 0%, #e8e8e8 56%); }
+
+.white:before {
+  content: "";
+  background: linear-gradient(45deg, #b5b5b5 0%, #fcfcfc 56%, #e8e8e8 96%);
+  border: 1px solid #b5b5b5; }
+
+.white:after {
+  content: "";
+  background: linear-gradient(45deg, #b5b5b5 0%, #fcfcfc 56%, #e8e8e8 96%);
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+  border-left: 1px solid rgba(255, 255, 255, 0.3);
+  border-bottom: 1px solid rgba(160, 160, 160, 0.3);
+  border-right: 1px solid rgba(160, 160, 160, 0.5);
+  box-shadow: inset 0px 0px 2px 2px rgba(150, 150, 150, 0.05); }
+
+.red {
+  background: linear-gradient(45deg, #990000 0%, red 56%); }
+
+.red:before {
+  content: "";
+  background: linear-gradient(45deg, #990000 0%, #fc0000 56%, #e80000 96%);
+  border: 1px solid #b50000; }
+
+.red:after {
+  content: "";
+  background: linear-gradient(45deg, #b50000 0%, #fc0000 56%, #e80000 96%);
+  border-top: 1px solid rgba(255, 0, 0, 0.3);
+  border-left: 1px solid rgba(255, 0, 0, 0.3);
+  border-bottom: 1px solid rgba(140, 0, 0, 0.3);
+  border-right: 1px solid rgba(140, 0, 0, 0.5);
+  box-shadow: inset 0px 0px 2px 2px rgba(140, 0, 0, 0.05); }
 
 .selected {
   box-shadow: 0px 0px 5px 5px green; }
 
-.king {
-  background-image: url("img/crown.png");
+.king:after {
+  content: "";
+  background: url("img/crown.png");
   background-repeat: no-repeat;
   background-position: center; }
-
-.disabled {
-  pointer-events: none;
-  background: rgba(0, 0, 0, 0.5); }
-
-.messageBoard {
-  float: right; }
