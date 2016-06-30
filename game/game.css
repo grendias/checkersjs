@@ -4,7 +4,8 @@ body {
   background-image: url("img/backgroundgreen.jpg");
   background-size: cover;
   color: #e5fa99;
-  font-family: "Raleway", sans-serif; }
+  font-family: "Raleway", sans-serif;
+  padding-top: 8em; }
 
 .form-control {
   border-radius: 0; }
@@ -46,13 +47,13 @@ body {
 .btnDiv {
   padding-left: 3.25em; }
 
-.loginBtn, .dashLogout, .gameBtn {
+.loginBtn, .dashLogout, .gameBtn, .messageBtn {
   background-color: #7B2127;
   color: #e5fa99;
   font-size: 1.5em;
   border-radius: 0; }
 
-.loginBtn:hover, .dashLogout:hover, .gameBtn:hover {
+.loginBtn:hover, .dashLogout:hover, .gameBtn:hover, .messageBtn:hover {
   background-color: #e5fa99;
   color: #7B2127; }
 
@@ -80,7 +81,12 @@ body {
   font: 100% "Raleway", sans-serif;
   color: #e5fa99; }
 
-.navBar {
+.navBar, .gameNavBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 9999;
   background: linear-gradient(to bottom, rgba(116, 39, 0, 0.5), rgba(116, 39, 0, 0.5)), url("img/navbar.jpeg");
   min-height: 7em;
   padding: 0;
@@ -88,18 +94,17 @@ body {
   justify-content: center;
   flex-wrap: wrap;
   box-shadow: -2px 2px 10px black; }
+  @media (max-width: 768px) {
+    .navBar, .gameNavBar {
+      flex-direction: column; } }
 
-.dashHead, .loginHead {
+.dashHead, .loginHead, .gameHead {
   font-family: "Berkshire Swash", cursive;
   letter-spacing: 5px;
   font-size: 6em;
   align-self: center;
   margin: 0 0.25em;
   text-shadow: -5px 0 #7B2127, 0 5px #7B2127; }
-  @media (max-width: 768px) {
-    .dashHead, .loginHead {
-      flex-direction: column;
-      justify-content: space-between; } }
 
 .small {
   font-size: 4em;
@@ -108,12 +113,16 @@ body {
   letter-spacing: 1px; }
   @media (max-width: 768px) {
     .small {
-      margin-left: 0.25em;
-      margin-right: auto; } }
+      margin-left: 0; } }
 
 .dashLogout {
   margin: 0 1em;
   align-self: center; }
+  @media (max-width: 768px) {
+    .dashLogout {
+      position: absolute;
+      top: 0;
+      right: 0; } }
 
 .gameContain {
   display: flex;
@@ -151,13 +160,40 @@ body {
 .closed {
   cursor: not-allowed; }
 
+.gameNavBar {
+  margin-bottom: 1em; }
+  @media (max-width: 768px) {
+    .gameNavBar {
+      flex-direction: row;
+      justify-content: space-between; } }
+
+@media (max-width: 768px) {
+  .gameHead {
+    font-size: 5em; } }
+
+.gameContainer {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  align-items: center; }
+  @media (max-width: 768px) {
+    .gameContainer {
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: space-around; } }
+
 #board {
   height: 560px;
   width: 560px;
   border: 1px solid #000;
-  margin: 10px 10px;
+  margin: 0 10px;
   position: relative;
-  padding: 0; }
+  padding: 0;
+  box-shadow: -2px 2px 10px black; }
+  @media (max-width: 768px) {
+    #board {
+      order: 3;
+      margin: 10px; } }
 
 .square {
   height: 70px;
@@ -183,27 +219,55 @@ body {
   pointer-events: none;
   background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)); }
 
-.messageArea {
-  position: relative; }
-
 .messageBoard {
   height: 560px;
-  width: 100%;
-  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)); }
+  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3));
+  display: flex;
+  align-items: flex-end;
+  box-shadow: -2px 2px 10px black; }
+  @media (max-width: 768px) {
+    .messageBoard {
+      order: 2;
+      height: 130px;
+      margin: 10px; }
+      .messageBoard .form-control {
+        height: 1em;
+        width: 10em;
+        display: inline; }
+      .messageBoard .form-group {
+        margin: 0; } }
 
-.messageInput {
-  position: absolute;
-  bottom: -40px; }
+.gameBtn {
+  margin: 0 1em;
+  align-self: center; }
+  @media (max-width: 768px) {
+    .gameBtn {
+      font-size: 1.25em; } }
+
+@media (max-width: 768px) {
+  .messageBtn {
+    font-size: 1em; } }
+
+.btnLeft {
+  margin-left: auto; }
+  @media (max-width: 768px) {
+    .btnLeft {
+      margin: 0; } }
 
 .player {
-  margin-top: 195px;
+  border: 3px solid #e5fa99;
+  box-shadow: -2px 2px 10px black;
   height: 125px;
   padding: 10px;
-  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)); }
-  .player p {
-    text-align: center; }
-  .player .piece {
-    margin: 0 0.9em; }
+  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3));
+  display: flex;
+  flex-direction: column;
+  align-items: center; }
+  @media (max-width: 768px) {
+    .player {
+      order: 1;
+      height: 110px;
+      margin: 10px; } }
 
 .piece {
   width: 60px;
