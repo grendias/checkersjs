@@ -1,17 +1,24 @@
-<div class="container-fluid dashContainer">
-	<div class="row">
+<div class="dashContainer">
+	<div class="navBar">
+		<h1 class="dashHead">Checkers</h1>
+		<h2 class="dashHead small">{{dash.heading}}</h2>
 		<button type="submit" ng-click="dash.logOut()" class="dashLogout btn btn-default">Logout</button>
-		<h1 class="col-sm-12">{{dash.heading}}</h1>
-		<div class="dashGame col-sm-6 col-md-2 col-md-offset-1 newGame" ng-click="dash.newGame()">
+	</div>
+	<div class="gameContain">
+		<div class="dashGame newGame" ng-click="dash.newGame()">
 			Create New Game
+			<div class="piece red dashPiece"></div>
+			<div class="piece white dashPieceW king"></div>
 		</div>
 		<div
 			ng-repeat="(key,game) in dash.games"
 			ng-click="dash.joinGame(key)"
-			class="dashGame col-sm-6 col-md-2 col-md-offset-1"
+			class="dashGame"
 			ng-class="game.player2 ? 'closed' : 'open'"
 		>
-		Join Game
+			Join Game
+			<div class="piece red dashPiece"></div>
+			<div class="piece white dashPieceW king"></div>
 		</div>
 	</div>
 </div>

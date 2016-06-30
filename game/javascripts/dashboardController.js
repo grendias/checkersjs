@@ -2,7 +2,7 @@
 angular.module('app').controller('DashboardCtrl', function ($timeout, AuthFactory, $location, $routeParams) {
 	const dash = this;
 	var uid = $routeParams.uid;
-	dash.heading = 'dashboard';
+	dash.heading = 'Dashboard';
 	firebase.database().ref('games/').on('value', (snap) => {
 			dash.games = snap.val();
 			$timeout();
