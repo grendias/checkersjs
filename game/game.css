@@ -234,27 +234,43 @@ body {
   position: absolute;
   width: 560px;
   height: 560px;
-  pointer-events: none;
   background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)); }
 
 .messageBoard {
   height: 560px;
+  width: 280px;
   background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3));
   display: flex;
-  align-items: flex-end;
-  box-shadow: -2px 2px 10px black; }
+  flex-direction: column;
+  box-shadow: -2px 2px 10px black;
+  position: relative; }
+  .messageBoard .messageArea {
+    overflow-y: scroll;
+    height: 510px; }
+  .messageBoard .form-group {
+    position: absolute;
+    bottom: 0;
+    left: 0; }
   @media (max-width: 768px) {
     .messageBoard {
-      flex-direction: reverse-column;
       order: 2;
       height: 130px;
       margin: 10px; }
+      .messageBoard .messageArea {
+        height: 100px; }
       .messageBoard .form-control {
         height: 1em;
         width: 10em;
         display: inline; }
       .messageBoard .form-group {
         margin: 0; } }
+
+::-webkit-scrollbar {
+  background: transparent; }
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 10px; }
 
 .gameBtn {
   margin: 0 1em;

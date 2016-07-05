@@ -1,12 +1,19 @@
 "use strict";
-angular.module('app').controller('DashboardCtrl', function ($timeout, AuthFactory, $location, $routeParams, UsersFact) {
+angular.module('app').controller('DashboardCtrl', function ($timeout, AuthFactory, $location, $routeParams) {
 	const dash = this;
 	var uid = $routeParams.uid;
-	var userEmail = UsersFact.userEmail;
+	var userEmail;
 	dash.heading = 'Dashboard';
 	firebase.database().ref('games/').on('value', (snap) => {
 		dash.games = snap.val();
 		$timeout();
+	});
+	firebase.database().ref('users/').once('value').then(function(snap) {
+		for(let key in snap.val()) {
+			if (key === uid) {
+				userEmail = snap.val()[key].email;
+			}
+		}
 	});
 
 	dash.newGame = () => {
