@@ -22,7 +22,9 @@ angular.module('app')
 		firebase.database().ref(`games/${gameId}/`).on('value', (snap) => {
 			game.turn = snap.val().turn;
 			game.player1Id = snap.val().player1;
+			game.player1Email = snap.val().player1Email;
 			game.player2Id = snap.val().player2;
+			game.player2Email = snap.val().player2Email;
 			game.player1Death = snap.val().player1Death;
 			game.player2Death = snap.val().player2Death;
 			$timeout();
@@ -52,7 +54,6 @@ angular.module('app')
 			game.playerColor = 'white';
 			game.player = '2';
 		}
-
 		game.chckBrd = (x, y) => {
 			var oddX = x % 2;
 			var oddY = y % 2;

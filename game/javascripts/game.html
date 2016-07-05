@@ -1,10 +1,12 @@
 <div id="game">
 	<div
-		class="results ng-hide"
-		ng-show="game.player1Death === 8 || game.player2Death === 8">winner
-		<p ng-show="game.player1Death === 8" class="ng-hide">Player 2 wins</p>
-		<p ng-show="game.player2Death === 8" class="ng-hide"> Player 1 Wins</p>
-		<button type="button" ng-click="game.reset()">Play Again?</button>
+		class="overlay ng-hide"
+		ng-show="game.player1Death === 8 || game.player2Death === 8">
+		<div class="results">
+			<p ng-show="game.player1Death === 8" class="ng-hide">{{game.player2Email}} wins</p>
+			<p ng-show="game.player2Death === 8" class="ng-hide"> {{game.player1Email}} Wins</p>
+			<button type="button" ng-click="game.reset()">Play Again?</button>
+		</div>
 	</div>
 	<div class="gameNavBar">
 		<h1 class="gameHead">Checkers</h1>
@@ -20,7 +22,7 @@
 			<p ng-show="game.playerColor === 'red'">Score: {{game.player2Death}}</p>
 			<p ng-show="game.playerColor === 'white'">Score: {{game.player1Death}}</p>
 		</div>
-		<div id="board" class="">
+		<div id="board">
 			<div
 				ng-repeat="square in game.board"
 				id="{{index}}"
@@ -40,19 +42,17 @@
 					>
 				</div>
 			</div>
-			<!-- <div ng-class="game.toggleTurn() ? 'hide' : 'disabled'">
-			</div> -->
-		</div>
-		<!-- <div class="messageArea"> -->
-			<div class="messageBoard">
-				<p ng-repeat="message in game.messages">{{message.userEmail}}: {{message.userMessage}}</p>
-				<form class="form-inline messageInput">
-					<div class="form-group">
-						<input type="text" name="" value=""  class="form-control" placeholder="Enter message here:" ng-model="game.message">
-						<input type="submit" name="" class="btn btn-default messageBtn" ng-click="game.submitMessage()">
-					</div>
-				</form>
+			<div ng-class="game.toggleTurn() ? 'hide' : 'disabled'">
 			</div>
-		<!-- </div> -->
+		</div>
+		<div class="messageBoard">
+			<p ng-repeat="message in game.messages">{{message.userEmail}}: {{message.userMessage}}</p>
+			<form class="form-inline messageInput">
+				<div class="form-group">
+					<input type="text" name="" value=""  class="form-control" placeholder="Enter message here:" ng-model="game.message">
+					<input type="submit" name="" class="btn btn-default messageBtn" ng-click="game.submitMessage()">
+				</div>
+			</form>
+		</div>
 	</div>
 </div>

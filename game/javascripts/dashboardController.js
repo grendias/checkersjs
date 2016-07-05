@@ -1,15 +1,18 @@
 "use strict";
-angular.module('app').controller('DashboardCtrl', function ($timeout, AuthFactory, $location, $routeParams) {
+angular.module('app').controller('DashboardCtrl', function ($timeout, AuthFactory, $location, $routeParams, UsersFact) {
 	const dash = this;
 	var uid = $routeParams.uid;
+	var userEmail = UsersFact.userEmail;
 	dash.heading = 'Dashboard';
 	firebase.database().ref('games/').on('value', (snap) => {
-			dash.games = snap.val();
-			$timeout();
-		});
+		dash.games = snap.val();
+		$timeout();
+	});
+
 	dash.newGame = () => {
 		firebase.database().ref('games/').push({
 			player1: uid,
+			player1Email: userEmail,
 			test: 'testgame',
 			turn: uid,
 			player1Death: 0,
@@ -42,6 +45,7 @@ angular.module('app').controller('DashboardCtrl', function ($timeout, AuthFactor
 	dash.joinGame = (gameId) => {
 		firebase.database().ref(`games/${gameId}`).update({
 			player2: uid,
+			player2Email: userEmail
 		});
 		var pieceCount = 8;
 		for(let i=0; i<pieceCount; i++) {
