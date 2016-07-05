@@ -11,10 +11,14 @@ angular.module('app').controller('DashboardCtrl', function ($timeout, AuthFactor
 	firebase.database().ref('users/').once('value').then(function(snap) {
 		for(let key in snap.val()) {
 			if (key === uid) {
-				userEmail = snap.val()[key].email;
+				let fullEmail = snap.val()[key].email;
+				let index = fullEmail.indexOf('@');
+				userEmail = fullEmail.slice(0, index);
 			}
 		}
 	});
+
+
 
 	dash.newGame = () => {
 		firebase.database().ref('games/').push({

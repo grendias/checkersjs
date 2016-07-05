@@ -46,11 +46,11 @@ angular.module('app')
 		});
 
 		if(game.player1Id === userId) {
-			game.playerEmail = userEmail;
+			game.playerEmail = game.player1Email;
 			game.playerColor = 'red';
 			game.player = '1';
 		} else if (game.player2Id === userId) {
-			game.playerEmail = userEmail;
+			game.playerEmail = game.player2Email;
 			game.playerColor = 'white';
 			game.player = '2';
 		}
