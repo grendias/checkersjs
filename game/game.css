@@ -10,8 +10,17 @@ body {
     body {
       padding-top: 7em; } }
 
+a {
+	align-self: center;
+	margin: 1em; }
+
 .form-control {
   border-radius: 0; }
+
+.links {
+  position: absolute;
+  bottom: 1em;
+  left: 0; }
 
 .loginContainer {
   width: 75%;
