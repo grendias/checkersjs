@@ -16,6 +16,7 @@ Checkers app is an online game room for playing checkers. Players can also messa
 
 ### To fork or clone Checkers:
 1. CD into the folder and run ```bower init``` in the command line to install dependencies.
+2. In the bootstrap.css file, comment out lines 1068-1078
 2. Run web-server on the game folder ie. npm's http-server.
 3. Since this project makes use of es6, this project will work best on Chrome or Safari 10 or higher.
 4. Sign in using an email real or fake to get to the dashboard.
