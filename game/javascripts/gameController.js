@@ -5,15 +5,7 @@ angular.module('app')
 		const gameId = $routeParams.gameid;
 		const userId = UsersFact.userId;
 		const userEmail = UsersFact.userEmail;
-		var currentPiece,
-				choice1,
-				choice2,
-				choice3,
-				choice4,
-				jumpChoice1,
-				jumpChoice2,
-				jumpChoice3,
-				jumpChoice4;
+		var currentPiece, choice1, choice2, choice3, choice4, jumpChoice1, jumpChoice2, jumpChoice3, jumpChoice4;
 		game.heading = "Checkers";
 		game.pieces = {};
 		game.messages = {};
@@ -42,7 +34,6 @@ angular.module('app')
 					$timeout();
 				}
 			}
-
 		});
 
 		if(game.player1Id === userId) {
@@ -54,12 +45,15 @@ angular.module('app')
 			game.playerColor = 'white';
 			game.player = '2';
 		}
+
+		//function to create checkerboard pattern
 		game.chckBrd = (x, y) => {
 			var oddX = x % 2;
 			var oddY = y % 2;
 			return (oddX ^ oddY);
 		};
 
+		//function to reset player moves
 		function removeSelected () {
 			currentPiece = null;
 			choice1 = null;
@@ -73,15 +67,16 @@ angular.module('app')
 			$('.selected').removeClass('selected');
 		}
 
-
+		//determines who's turn it is
 		game.toggleTurn = () => {
 			if (game.turn === userId) {
 				return true;
 			}
 		};
 
-
+		//when a player chooses a king piece this function is called
 		game.chooseKing = (e, piece, id) => {
+			//functions for the possible moves a king could make
 			function Move1 (x,y, index) {
 				this.index = index + 9;
 				this.x = x + 1;
@@ -122,6 +117,7 @@ angular.module('app')
 				this.x = x - 2;
 				this.y = y + 2;
 			}
+
 			if (game.turn === piece.userid) {
 				var currentElement = e.currentTarget;
 				var currentSquare;
@@ -133,6 +129,7 @@ angular.module('app')
 				var move2;
 				var move3;
 				var move4;
+				//finds where the other pieces are
 				for (let id in game.pieces) {
 					if (game.pieces[id].x === piece.x && game.pieces[id].y === piece.y) {
 					} else {
@@ -143,15 +140,17 @@ angular.module('app')
 						});
 					}
 				}
-
+				//finds which board square the piece is in
 				for (let key in game.board) {
 					if(piece.x === game.board[key].y && piece.y === game.board[key].x) {currentSquare = game.board[key];}
 				}
+				//looks for possible non-jump moves
 				for (let key in game.board) {
 					move1 = new Move1(currentSquare.x, currentSquare.y, currentSquare.index);
 					move2 = new Move2(currentSquare.x, currentSquare.y, currentSquare.index);
 					move3 = new Move3(currentSquare.x, currentSquare.y, currentSquare.index);
 					move4 = new Move4(currentSquare.x, currentSquare.y, currentSquare.index);
+					//checks to see if possible move is empty
 					if (move1.index === game.board[key].index) {
 						for (let i = 0; i<takenSquares.length; i++) {
 							if(move1.x === takenSquares[i].y && move1.y === takenSquares[i].x) {
@@ -159,7 +158,7 @@ angular.module('app')
 								choice1 = game.board[key];
 							}
 						}
-					} else if (move2.index === game.board[key].index) { //&& is empty
+					} else if (move2.index === game.board[key].index) {
 						for (let i = 0; i<takenSquares.length; i++) {
 							if(move2.x === takenSquares[i].y && move2.y === takenSquares[i].x) {
 							} else {
@@ -182,11 +181,13 @@ angular.module('app')
 						}
 					}
 				}
+				//checks for possible jump moves
 				for (let key in game.board) {
 					var jumpMove1 = new JumpMove1(currentSquare.x, currentSquare.y, currentSquare.index);
 					var jumpMove2 = new JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
 					var jumpMove3 = new JumpMove3(currentSquare.x, currentSquare.y, currentSquare.index);
 					var jumpMove4 = new JumpMove4(currentSquare.x, currentSquare.y, currentSquare.index);
+					// checks to see if a jump move is possible
 					if (jumpMove1.index === game.board[key].index) {
 						for(let i = 0; i<takenSquares.length; i++) {
 							if(move1.x === takenSquares[i].y && move1.y === takenSquares[i].x) {
@@ -255,6 +256,8 @@ angular.module('app')
 				}
 			}
 		};
+
+		//when player 1 chooses a piece this function is called
 		game.choosePiecePlayer1 = (e, piece, id) => {
 			function Move1 (x,y, index) {
 				this.index = index + 9;
@@ -283,8 +286,8 @@ angular.module('app')
 				currentPiece.id = id;
 				$(currentElement).toggleClass('selected');
 				var takenSquares = [];
-				var move1;
-				var move2;
+				var move1, move2;
+				//finds the position of all the pieces
 				for (let id in game.pieces) {
 					if (game.pieces[id].x === piece.x && game.pieces[id].y === piece.y) {
 					} else {
@@ -295,9 +298,11 @@ angular.module('app')
 						});
 					}
 				}
+				//finds the position of the current piece
 				for (let key in game.board) {
 					if(piece.x === game.board[key].y && piece.y === game.board[key].x) {currentSquare = game.board[key];}
 				}
+				//looks for non-jump moves to see if they are empty
 				for (let key in game.board) {
 					move1 = new Move1(currentSquare.x, currentSquare.y, currentSquare.index);
 					move2 = new Move2(currentSquare.x, currentSquare.y, currentSquare.index);
@@ -308,7 +313,7 @@ angular.module('app')
 								choice1 = game.board[key];
 							}
 						}
-					} else if (move2.index === game.board[key].index) { //&& is empty
+					} else if (move2.index === game.board[key].index) {
 						for (let i = 0; i<takenSquares.length; i++) {
 							if(move2.x === takenSquares[i].y && move2.y === takenSquares[i].x) {
 							} else {
@@ -317,6 +322,7 @@ angular.module('app')
 						}
 					}
 				}
+				//checks for jump moves over white pieces and checks if they are empty
 				for (let key in game.board) {
 					var jumpMove1 = new JumpMove1(currentSquare.x, currentSquare.y, currentSquare.index);
 					var jumpMove2 = new JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
@@ -348,7 +354,7 @@ angular.module('app')
 			}
 		};
 
-
+		//same function as choosePiecePlayer1 except math for moves and jump criteria are different
 		game.choosePiecePlayer2 = (e, piece, id) => {
 			function Move1 (x,y, index) {
 				this.index = index - 9;
@@ -443,10 +449,14 @@ angular.module('app')
 				}
 			}
 		};
+
+		//when a player chooses a legal move
 		game.chooseSquare = (square) => {
+			//if the square they choose matches any of the possible moves the player has
 			if(square === choice1 || square === choice2 || square === choice3 || square === choice4 || square === jumpChoice1 || square === jumpChoice2 || square === jumpChoice3 || square === jumpChoice4) {
 				var newTop = (square.x * 70) + 'px';
 				var newLeft = (square.y * 70) + 'px';
+				//updates new coordinates of the game piece
 				firebase.database().ref(`/${gameId}/${currentPiece.id}`).update({
 					top: newTop,
 					left: newLeft,
@@ -455,6 +465,8 @@ angular.module('app')
 				});
 				$timeout();
 				$(`#${currentPiece.id}`).animate({top: newTop, left: newLeft}, "slide");
+
+				//checks to see if a piece will be kinged
 				if (currentPiece.color === 'red' && square.x === 7) {
 					firebase.database().ref(`/${gameId}/${currentPiece.id}`).update({
 						king: true
@@ -467,6 +479,7 @@ angular.module('app')
 					});
 					$timeout();
 				}
+				//if player makes a jump move: the jumped pieced is removed and player death is updated
 				if (square === jumpChoice1) {
 					let jumpSquareX = jumpChoice1.x - 1;
 					let jumpSquareY = jumpChoice1.y - 1;
@@ -540,6 +553,7 @@ angular.module('app')
 						}
 					}
 				}
+
 				if (game.turn === game.player1Id) {
 					firebase.database().ref(`games/${gameId}/`).update({
 						turn: game.player2Id
@@ -553,7 +567,7 @@ angular.module('app')
 			}
 		};
 
-
+		//function to play again
 		game.reset = () => {
 			firebase.database().ref(`/${gameId}/`).remove();
 			var pieceCount = 16;
