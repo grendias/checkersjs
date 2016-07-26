@@ -18,6 +18,8 @@
 			ng-class="game.player2 ? 'closed' : 'open'"
 		>
 			<p><span>J</span>oin <span>G</span>ame</p>
+			<p>Player 1: {{game.player1Email}}</p>
+			<p class='ng-hide' ng-show='game.player2'>Player 2: {{game.player2Email}}
 			<div class="piece red dashPiece"></div>
 			<div class="piece white dashPieceW king"></div>
 		</div>
