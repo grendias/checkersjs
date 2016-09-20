@@ -1,0 +1,113 @@
+.dashContainer {
+	font: 100% $fontStack;
+	color: $yellow;
+	// margin: 0 50px;
+	// width: 91%;
+}
+
+.navBar {
+	position: fixed;
+	top:0;
+	left: 0;
+	width: 100%;
+	z-index: 999;
+	background: linear-gradient(to bottom, rgba(116, 39, 0, 0.5), rgba(116, 39, 0, 0.5)), url("img/navbar.jpeg");
+	min-height: 7em;
+	padding: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-wrap: wrap;
+	box-shadow: $boxShadow;
+	@media (max-width: 768px) {
+  	flex-direction: column;
+	}
+}
+
+.dashHead {
+	font-family: $headerFont;
+	letter-spacing: 5px;
+	font-size: 6em;
+	align-self: center;
+	margin: 0 0.25em;
+	text-shadow: $textShadow;
+
+}
+
+.small {
+	font-size: 4em;
+	margin-left: auto;
+	color: $yellow;
+	letter-spacing: 1px;
+	@media (max-width: 768px) {
+		margin-left: 0;
+	}
+}
+
+.dashLogout {
+	@extend .loginBtn;
+	margin: 0 1em;
+	align-self: center;
+	@media (max-width: 768px) {
+		position: absolute;
+		top: 0;
+		right: 0;
+	}
+}
+
+.gameContain {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-around;
+	@media (max-width: 768px) {
+  	flex-direction: column;
+  	align-items: center;
+	}
+}
+
+.dashGame {
+	cursor: pointer;
+	font-size: 2em;
+	height: 200px;
+	border: 3px solid $yellow;
+	margin: 2em 0;
+	background-image: $gradient;
+	position: relative;
+	box-shadow: $boxShadow;
+	min-width: 35%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	font-size: 2.5em;
+	span {
+		font-family: $headerFont;
+		display: inline;
+		font-size: 2em;
+	}
+	@media (max-width: 768px) {
+  	width: 85%;
+  	margin: 70px 1em;
+	}
+}
+
+.dashPiece {
+	bottom: -35px;
+  left: -35px;
+  box-shadow: $boxShadow;
+
+}
+
+.dashPieceW {
+	bottom: -20px;
+  left: -10px;
+  box-shadow: $boxShadow;
+}
+
+.closed {
+	pointer-events: none;
+}
+
+.github {
+	margin: 1em;
+}

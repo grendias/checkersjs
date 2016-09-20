@@ -1,7 +1,7 @@
 {
   "name": "checkers",
   "version": "1.0.0",
-  "description": "",
+  "description": "Checkers app is an online game room for playing checkers. Players can also message their opponents during game play.",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -15,5 +15,14 @@
   "bugs": {
     "url": "https://github.com/hannahhall/checkers/issues"
   },
-  "homepage": "https://github.com/hannahhall/checkers#readme"
+  "homepage": "https://github.com/hannahhall/checkers#readme",
+  "dependencies": {
+    "gulp-jshint": "^2.0.1",
+    "jshint": "^2.9.2",
+    "gulp-watch": "^4.3.6",
+    "gulp": "^3.9.1",
+    "gulp-sass": "^2.3.2",
+    "jshint-stylish": "^2.2.0"
+  },
+  "devDependencies": {}
 }

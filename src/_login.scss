@@ -1,0 +1,92 @@
+.loginContainer {
+	width: 75%;
+	color: $yellow;
+	font: 100% $fontStack;
+	border: 5px solid $yellow;
+	background-image: $gradient;
+	margin-top: 10em;
+	box-shadow: $boxShadow;
+	position: relative;
+}
+
+.loginNavBar {
+	position: fixed;
+	top:0;
+	left: 0;
+	width: 100%;
+	z-index: 1;
+	justify-content: space-around;
+	background: linear-gradient(to bottom, rgba(116, 39, 0, 0.5), rgba(116, 39, 0, 0.5)), url("img/navbar.jpeg");
+	min-height: 7em;
+	padding: 0;
+	display: flex;
+	flex-wrap: wrap;
+	box-shadow: $boxShadow;
+	align-items: center;
+}
+
+.loginHead {
+	@extend .dashHead;
+}
+
+.loginPieceR {
+	width: 60px;
+	height: 60px;
+	margin: 5px;
+	border-radius: 100%;
+	box-shadow: $boxShadow;
+	background-color: rgba(255,0,0,1);
+	background-image: url('img/crown.png');
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+.loginPieceW {
+	@extend .loginPieceR;
+	background-color: #FFF;
+}
+
+.btnDiv {
+	padding-left: 3.25em;
+}
+
+.loginBtn {
+	background-color: #7B2127;
+   color: #e5fa99;
+   font-size: 1.5em;
+   border-radius: 0;
+}
+
+.loginBtn:hover {
+	background-color: $yellow;
+	color: $red;
+}
+
+.loginH2 {
+	padding-left: 1em;
+	font-size: 3em;
+	text-shadow: -5px 0 #000, 0 5px #000;
+	font-family: $headerFont;
+}
+
+.loginInput {
+  width: 70%;
+	@media (max-width: 768px) {
+		width: 50%;
+	}
+}
+
+.loginLabel {
+	font-size: 1.5em;
+	@media (max-width: 950px) {
+		text-align: right;
+		padding: 7px 15px 0;
+		margin-left: 0.5em;
+	}
+}
+
+.links {
+  position: absolute;
+  bottom: 1em;
+  left: 1em;
+}

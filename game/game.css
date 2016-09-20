@@ -10,17 +10,8 @@ body {
     body {
       padding-top: 7em; } }
 
-a {
-	align-self: center;
-	margin: 1em; }
-
 .form-control {
   border-radius: 0; }
-
-.links {
-  position: absolute;
-  bottom: 1em;
-  left: 0; }
 
 .loginContainer {
   width: 75%;
@@ -88,11 +79,16 @@ a {
 
 .loginLabel {
   font-size: 1.5em; }
-  @media (max-width: 768px) {
+  @media (max-width: 950px) {
     .loginLabel {
       text-align: right;
       padding: 7px 15px 0;
       margin-left: 0.5em; } }
+
+.links {
+  position: absolute;
+  bottom: 1em;
+  left: 1em; }
 
 .dashContainer {
   font: 100% "Raleway", sans-serif;
@@ -109,6 +105,7 @@ a {
   padding: 0;
   display: flex;
   justify-content: center;
+  align-items: center;
   flex-wrap: wrap;
   box-shadow: -2px 2px 10px black; }
   @media (max-width: 768px) {
@@ -186,6 +183,9 @@ a {
 
 .closed {
   pointer-events: none; }
+
+.github {
+  margin: 1em; }
 
 .gameNavBar {
   margin-bottom: 1em; }

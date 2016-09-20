@@ -1,0 +1,33 @@
+.overlay {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	z-index: 9999;
+	background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4));
+	margin: 0;
+	top: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.results {
+	background-image: $gradient;
+	min-height: 10em;
+	min-width: 20em;
+	border: 3px solid $yellow;
+	box-shadow: $boxShadow;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	button {
+		@extend .loginBtn;
+		align-self: center;
+	}
+	p {
+		font-size: 3em;
+		font-family: $headerFont;
+		padding: 0 1em;
+	}
+}

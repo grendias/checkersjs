@@ -1,0 +1,174 @@
+.gameNavBar {
+	@extend .navBar;
+	margin-bottom: 1em;
+	@media (max-width: 768px) {
+		flex-direction: row;
+		justify-content: space-between;
+	}
+}
+
+.gameHead {
+	@extend .dashHead;
+	@media (max-width: 768px) {
+		font-size: 5em;
+	}
+}
+
+.gameContainer {
+	display: flex;
+	justify-content: space-around;
+	flex-wrap: wrap;
+	align-items: center;
+	// @media (max-width: 1080px) {
+	// 	justify-content: flex-start;
+	// }
+	@media (max-width: 768px) {
+		flex-direction: row;
+		flex-wrap: wrap;
+		justify-content: space-around;
+	}
+}
+
+#board {
+	height: 560px;
+	width: 560px;
+	border: 1px solid #000;
+	margin: 0 10px;
+	position: relative;
+	padding: 0;
+	box-shadow: $boxShadow;
+	// @media (max-width: 1080px) {
+	// 	order: 3;
+	// }
+	@media (max-width: 768px) {
+		order: 3;
+		margin: 3px;
+	}
+}
+
+.square {
+	height: 70px;
+	width: 70px;
+	float: left;
+	background-image: url('img/white.jpg');
+}
+
+.squareBlack {
+	height: 70px;
+	width: 70px;
+	float: left;
+	background: #000;
+	background-image: url('img/black.jpeg');
+}
+
+.hide {
+	display: none;
+}
+
+.disabled {
+	display: block;
+	position: absolute;
+	width: 560px;
+	height: 560px;
+	background-image: $gradient;
+}
+
+.messageBoard {
+	height: 560px;
+	width: 280px;
+	background-image: $gradient;
+	display: flex;
+	flex-direction: column;
+	box-shadow: $boxShadow;
+	position: relative;
+	border: 3px solid $yellow;
+	.messageArea {
+		overflow-y: scroll;
+		height: 510px;
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-end;
+		padding: 3px;
+	}
+	.form-group {
+		position: absolute;
+		bottom: 3px;
+		left: 3px;
+	}
+	// @media (max-width: 1080px) {
+	// 	order: 2;
+	// 	height: 350px;
+	// }
+	@media (max-width: 768px) {
+		order: 2;
+		height: 110px;
+		margin: 3px;
+		padding: 3px;
+		.messageArea {
+			height: 85px;
+		}
+		.form-control {
+			height: 1em;
+			width: 10em;
+			display: inline;
+		}
+		.form-group {
+			margin: 0;
+		}
+	}
+}
+
+::-webkit-scrollbar {
+	background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: rgba(0,0,0,0.1);
+	border-radius: 10px;
+}
+
+.gameBtn {
+	@extend .loginBtn;
+	margin: 0 1em;
+	align-self: center;
+	@media (max-width: 768px) {
+		font-size: 1.25em;
+	}
+}
+
+.messageBtn {
+	@extend .loginBtn;
+	@media (max-width: 768px) {
+		font-size: 1em;
+	}
+}
+
+.btnLeft {
+	margin-left: auto;
+	@media (max-width: 768px) {
+		margin: 0;
+	}
+}
+
+.player {
+	border: 3px solid $yellow;
+	box-shadow: $boxShadow;
+	height: 125px;
+	padding: 10px;
+	background-image: $gradient;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	// @media (max-width: 1080px) {
+	// 	order: 1;
+	// }
+	@media (max-width: 768px) {
+		order: 1;
+		height: 110px;
+		margin: 3px;
+		padding: 3px;
+		p {
+			margin: 0;
+		}
+	}
+}
