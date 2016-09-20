@@ -1,5 +1,5 @@
 "use strict";
-angular.module('app', ['ngRoute'])
+angular.module('app', ['ngRoute', 'ngCookies'])
 	.factory('BoardFact', () => {
 		const row = 8;
 		var squares = [];
@@ -29,12 +29,14 @@ angular.module('app', ['ngRoute'])
 		};
 		firebase.initializeApp(config);
 	})
-	.factory('AuthFactory', ($location, $timeout) => {
+	.factory('AuthFactory', ($location, $timeout, $cookies) => {
 		firebase.auth().onAuthStateChanged((user) => {
 		if (user) {
 			firebase.database().ref(`/users/${user.uid}`).set({
 				email: user.email,
 			});
+			$cookies.put('userid', user.uid);
+			$cookies.put('email', user.email);
 			$location.path(`/dashboard/${user.uid}`);
 			$timeout();
 		} else {
@@ -57,7 +59,6 @@ angular.module('app', ['ngRoute'])
 	.factory('UsersFact', () => {
 		const currentUser = firebase.auth().currentUser;
 		return {
-			userId: currentUser.uid,
-			userEmail: currentUser.email
+			user: currentUser
 		};
 	});

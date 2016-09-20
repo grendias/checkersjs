@@ -1,10 +1,19 @@
 "use strict";
 angular.module('app')
-	.controller('GameCtrl', function ($timeout, BoardFact, $routeParams, $location, UsersFact) {
+	.controller('GameCtrl', function ($timeout, BoardFact, $routeParams, $location, UsersFact, $cookies, $window) {
 		const game = this;
+
+		$window.onbeforeunload = function(e) {
+			e = e || $window.event;
+			console.log(e);
+			e.preventDefault = true;
+			e.cancelBubble = true;
+			e.returnValue = 'reload';
+		};
+
 		const gameId = $routeParams.gameid;
-		const userId = UsersFact.userId;
-		const userEmail = UsersFact.userEmail;
+		var userId = $cookies.get('userid');
+		var userEmail = $cookies.get('email');
 		var currentPiece, choice1, choice2, choice3, choice4, jumpChoice1, jumpChoice2, jumpChoice3, jumpChoice4;
 		game.heading = "Checkers";
 		game.pieces = {};
