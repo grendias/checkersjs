@@ -13,7 +13,7 @@ $boxShadow: -2px 2px 10px rgba(0, 0, 0, 1);
 
 body {
 	margin: 0;
-	background-image: url('img/backgroundgreen.jpg');
+	background: url('img/backgroundgreen.jpg') no-repeat center center fixed;
 	background-size: cover;
 	color: $yellow;
 	font-family: $fontStack;
@@ -32,5 +32,3 @@ body {
 @import 'gamePlay';
 @import 'piece';
 @import 'overlay';
-
-

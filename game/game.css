@@ -1,7 +1,7 @@
 @import 'https://fonts.googleapis.com/css?family=Berkshire+Swash|Raleway';
 body {
   margin: 0;
-  background-image: url("img/backgroundgreen.jpg");
+  background: url("img/backgroundgreen.jpg") no-repeat center center fixed;
   background-size: cover;
   color: #e5fa99;
   font-family: "Raleway", sans-serif;
