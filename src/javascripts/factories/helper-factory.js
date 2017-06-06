@@ -24,7 +24,7 @@ app.factory('HelperFact', () => {
     return currentSquare;
   };
 
-  let getRegularMoves = ({
+  let getRegularMove = ({
     board, move, takenSquares
   }) => {
     for (let key in board) {
@@ -38,9 +38,29 @@ app.factory('HelperFact', () => {
     }
   };
 
+  let getJumpMove = ({
+    board, jumpMove, move, takenSquares, oppositePlayer
+  }) => {
+    for (let key in board) {
+      if (jumpMove.index === board[key].index) {
+        for (let i = 0; i < takenSquares.length; i++) {
+          if (move.x === takenSquares[i].y && move.y === takenSquares[i].x) {
+            if (takenSquares[i].player === oppositePlayer) {
+              if (jumpMove.x === takenSquares[i].y && jumpMove.y === takenSquares[i].y) {} else {
+                let jumpChoice = board[key];
+                return jumpChoice;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
   return {
     getTakenSquares,
     getCurrentSquare,
-    getRegularMoves
+    getRegularMove,
+    getJumpMove
   };
 });

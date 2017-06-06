@@ -198,22 +198,22 @@ app.controller('GameCtrl', function ($timeout, BoardFact, $routeParams, $locatio
 			var move2 = new player1Moves.Move2(currentSquare.x, currentSquare.y, currentSquare.index);
 			var move3 = new player2Moves.Move1(currentSquare.x, currentSquare.y, currentSquare.index);
 			var move4 = new player2Moves.Move2(currentSquare.x, currentSquare.y, currentSquare.index);
-			choice1 = HelperFact.getRegularMoves({
+			choice1 = HelperFact.getRegularMove({
 				board: game.board,
 				move: move1,
 				takenSquares: takenSquares
 			});
-			choice2 = HelperFact.getRegularMoves({
+			choice2 = HelperFact.getRegularMove({
 				board: game.board,
 				takenSquares: takenSquares,
 				move: move2
 			});
-			choice3 = HelperFact.getRegularMoves({
+			choice3 = HelperFact.getRegularMove({
 				board: game.board,
 				move: move3,
 				takenSquares: takenSquares
 			});
-			choice4 = HelperFact.getRegularMoves({
+			choice4 = HelperFact.getRegularMove({
 				board: game.board,
 				takenSquares: takenSquares,
 				move: move4
@@ -301,44 +301,33 @@ app.controller('GameCtrl', function ($timeout, BoardFact, $routeParams, $locatio
 			//looks for non-jump moves to see if they are empty
 			var move1 = new player1Moves.Move1(currentSquare.x, currentSquare.y, currentSquare.index);
 			var move2 = new player1Moves.Move2(currentSquare.x, currentSquare.y, currentSquare.index);
-			choice1 = HelperFact.getRegularMoves({
+			var jumpMove1 = new player1Moves.JumpMove1(currentSquare.x, currentSquare.y, currentSquare.index);
+			var jumpMove2 = new player1Moves.JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
+
+			choice1 = HelperFact.getRegularMove({
 				board: game.board,
 				move: move1,
 				takenSquares: takenSquares
 			});
-			choice2 = HelperFact.getRegularMoves({
+			choice2 = HelperFact.getRegularMove({
 				board: game.board,
 				takenSquares: takenSquares,
 				move: move2
 			});
-
-			//checks for jump moves over white pieces and checks if they are empty
-			for (var key in game.board) {
-				var jumpMove1 = new player1Moves.JumpMove1(currentSquare.x, currentSquare.y, currentSquare.index);
-				var jumpMove2 = new player1Moves.JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
-				if (jumpMove1.index === game.board[key].index) {
-					for (var i = 0; i < takenSquares.length; i++) {
-						if (move1.x === takenSquares[i].y && move1.y === takenSquares[i].x) {
-							if (takenSquares[i].player === 'white') {
-								if (jumpMove1.x === takenSquares[i].y && jumpMove1.y === takenSquares[i].y) {} else {
-									jumpChoice1 = game.board[key];
-								}
-							}
-						}
-					}
-				} else if (jumpMove2.index === game.board[key].index) {
-					for (var _i4 = 0; _i4 < takenSquares.length; _i4++) {
-						if (move2.x === takenSquares[_i4].y && move2.y === takenSquares[_i4].x) {
-							if (takenSquares[_i4].player === 'white') {
-								// console.log(jumpMove2);
-								if (jumpMove2.x === takenSquares[_i4].y && jumpMove2.y === takenSquares[_i4].y) {} else {
-									jumpChoice2 = game.board[key];
-								}
-							}
-						}
-					}
-				}
-			}
+			jumpChoice1 = HelperFact.getJumpMove({
+				board: game.board,
+				jumpMove: jumpMove1,
+				move: move1,
+				takenSquares: takenSquares,
+				oppositePlayer: 'white'
+			});
+			jumpChoice2 = HelperFact.getJumpMove({
+				board: game.board,
+				jumpMove: jumpMove2,
+				move: move2,
+				takenSquares: takenSquares,
+				oppositePlayer: 'white'
+			});
 		}
 	};
 
@@ -353,42 +342,33 @@ app.controller('GameCtrl', function ($timeout, BoardFact, $routeParams, $locatio
 			var takenSquares = HelperFact.getTakenSquares(currentPiece, game.pieces);
 			var move1 = new player2Moves.Move1(currentSquare.x, currentSquare.y, currentSquare.index);
 			var move2 = new player2Moves.Move2(currentSquare.x, currentSquare.y, currentSquare.index);
-			choice1 = HelperFact.getRegularMoves({
+			var jumpMove1 = new player2Moves.JumpMove1(currentSquare.x, currentSquare.y, currentSquare.index);
+			var jumpMove2 = new player2Moves.JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
+
+			choice1 = HelperFact.getRegularMove({
 				board: game.board,
 				move: move1,
 				takenSquares: takenSquares
 			});
-			choice2 = HelperFact.getRegularMoves({
+			choice2 = HelperFact.getRegularMove({
 				board: game.board,
 				takenSquares: takenSquares,
 				move: move2
 			});
-
-			for (var key in game.board) {
-				var jumpMove1 = new player2Moves.JumpMove1(currentSquare.x, currentSquare.y, currentSquare.index);
-				var jumpMove2 = new player2Moves.JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
-				if (jumpMove1.index === game.board[key].index) {
-					for (var i = 0; i < takenSquares.length; i++) {
-						if (move1.x === takenSquares[i].y && move1.y === takenSquares[i].x) {
-							if (takenSquares[i].player === 'red') {
-								if (jumpMove1.x === takenSquares[i].y && jumpMove1.y === takenSquares[i].y) {} else {
-									jumpChoice3 = game.board[key];
-								}
-							}
-						}
-					}
-				} else if (jumpMove2.index === game.board[key].index) {
-					for (var _i5 = 0; _i5 < takenSquares.length; _i5++) {
-						if (move2.x === takenSquares[_i5].y && move2.y === takenSquares[_i5].x) {
-							if (takenSquares[_i5].player === 'red') {
-								if (jumpMove2.x === takenSquares[_i5].y && jumpMove2.y === takenSquares[_i5].y) {} else {
-									jumpChoice4 = game.board[key];
-								}
-							}
-						}
-					}
-				}
-			}
+			jumpChoice3 = HelperFact.getJumpMove({
+				board: game.board,
+				jumpMove: jumpMove1,
+				move: move1,
+				takenSquares: takenSquares,
+				oppositePlayer: 'red'
+			});
+			jumpChoice4 = HelperFact.getJumpMove({
+				board: game.board,
+				jumpMove: jumpMove2,
+				move: move2,
+				takenSquares: takenSquares,
+				oppositePlayer: 'red'
+			});
 		}
 	};
 
@@ -693,7 +673,7 @@ app.factory('HelperFact', function () {
     return currentSquare;
   };
 
-  var getRegularMoves = function getRegularMoves(_ref) {
+  var getRegularMove = function getRegularMove(_ref) {
     var board = _ref.board,
         move = _ref.move,
         takenSquares = _ref.takenSquares;
@@ -709,10 +689,34 @@ app.factory('HelperFact', function () {
     }
   };
 
+  var getJumpMove = function getJumpMove(_ref2) {
+    var board = _ref2.board,
+        jumpMove = _ref2.jumpMove,
+        move = _ref2.move,
+        takenSquares = _ref2.takenSquares,
+        oppositePlayer = _ref2.oppositePlayer;
+
+    for (var key in board) {
+      if (jumpMove.index === board[key].index) {
+        for (var i = 0; i < takenSquares.length; i++) {
+          if (move.x === takenSquares[i].y && move.y === takenSquares[i].x) {
+            if (takenSquares[i].player === oppositePlayer) {
+              if (jumpMove.x === takenSquares[i].y && jumpMove.y === takenSquares[i].y) {} else {
+                var jumpChoice = board[key];
+                return jumpChoice;
+              }
+            }
+          }
+        }
+      }
+    }
+  };
+
   return {
     getTakenSquares: getTakenSquares,
     getCurrentSquare: getCurrentSquare,
-    getRegularMoves: getRegularMoves
+    getRegularMove: getRegularMove,
+    getJumpMove: getJumpMove
   };
 });
 'use strict';
