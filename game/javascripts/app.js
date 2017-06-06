@@ -11,210 +11,6 @@ app.config(function () {
 	};
 	firebase.initializeApp(config);
 });
-'use strict';
-
-app.factory('AuthFactory', function ($location, $timeout, $cookies) {
-  firebase.auth().onAuthStateChanged(function (user) {
-    if (user) {
-      firebase.database().ref('/users/' + user.uid).set({
-        email: user.email
-      });
-      $cookies.put('userid', user.uid);
-      $cookies.put('email', user.email);
-      $location.path('/dashboard/' + user.uid);
-      $timeout();
-    } else {
-      $location.path('/');
-      $timeout();
-    }
-  });
-  return {
-    login: function login(email, password) {
-      firebase.auth().signInWithEmailAndPassword(email, password);
-    },
-    logout: function logout() {
-      firebase.auth().signOut();
-    },
-    register: function register(email, password) {
-      firebase.auth().createUserWithEmailAndPassword(email, password);
-    }
-  };
-});
-app.factory('UsersFact', function () {
-  var currentUser = firebase.auth().currentUser;
-  return {
-    user: currentUser
-  };
-});
-'use strict';
-
-app.factory('BoardFact', function () {
-  var row = 8;
-  var _squares = [];
-  var index = 0;
-  for (var x = 0; x < row; x++) {
-    for (var y = 0; y < row; y++) {
-      _squares.push({
-        'index': index,
-        'x': x,
-        'y': y
-      });
-      index++;
-    }
-  }
-  return {
-    squares: function squares() {
-      return _squares;
-    }
-  };
-});
-"use strict";
-
-app.factory('HelperFact', function () {
-  var getTakenSquares = function getTakenSquares(currentPiece, allPieces) {
-    var takenSquares = [];
-    for (var id in allPieces) {
-      if (allPieces[id].x === currentPiece.x && allPieces[id].y === currentPiece.y) {} else {
-        takenSquares.push({
-          x: allPieces[id].x,
-          y: allPieces[id].y,
-          player: allPieces[id].color
-        });
-      }
-    }
-    return takenSquares;
-  };
-
-  var getCurrentSquare = function getCurrentSquare(board, currentPiece) {
-    var currentSquare = void 0;
-    for (var key in board) {
-      if (currentPiece.x === board[key].y && currentPiece.y === board[key].x) {
-        currentSquare = board[key];
-      }
-    }
-    return currentSquare;
-  };
-
-  var getRegularMoves = function getRegularMoves(_ref) {
-    var board = _ref.board,
-        move = _ref.move,
-        takenSquares = _ref.takenSquares;
-
-    for (var key in board) {
-      if (move.index === board[key].index) {
-        for (var i = 0; i < takenSquares.length; i++) {
-          if (move.x === takenSquares[i].y && move.y === takenSquares[i].x) {} else {
-            return board[key];
-          }
-        }
-      }
-    }
-  };
-
-  return {
-    getTakenSquares: getTakenSquares,
-    getCurrentSquare: getCurrentSquare,
-    getRegularMoves: getRegularMoves
-  };
-});
-'use strict';
-
-app.factory('MoveFact', function () {
-  var kingMoves = {
-    Move1: function Move1(x, y, index) {
-      this.index = index + 9;
-      this.x = x + 1;
-      this.y = y + 1;
-    },
-    Move2: function Move2(x, y, index) {
-      this.index = index + 7;
-      this.x = x + 1;
-      this.y = y - 1;
-    },
-    JumpMove2: function JumpMove2(x, y, index) {
-      this.index = index + 14;
-      this.x = x + 2;
-      this.y = y - 2;
-    },
-    JumpMove1: function JumpMove1(x, y, index) {
-      this.index = index + 18;
-      this.x = x + 2;
-      this.y = y + 2;
-    },
-    Move3: function Move3(x, y, index) {
-      this.index = index - 9;
-      this.x = x - 1;
-      this.y = y - 1;
-    },
-    Move4: function Move4(x, y, index) {
-      this.index = index - 7;
-      this.x = x - 1;
-      this.y = y + 1;
-    },
-    JumpMove3: function JumpMove3(x, y, index) {
-      this.index = index - 18;
-      this.x = x - 2;
-      this.y = y - 2;
-    },
-    JumpMove4: function JumpMove4(x, y, index) {
-      this.index = index - 14;
-      this.x = x - 2;
-      this.y = y + 2;
-    }
-  };
-
-  var player1Moves = {
-    Move1: function Move1(x, y, index) {
-      this.index = index + 9;
-      this.x = x + 1;
-      this.y = y + 1;
-    },
-    Move2: function Move2(x, y, index) {
-      this.index = index + 7;
-      this.x = x + 1;
-      this.y = y - 1;
-    },
-    JumpMove2: function JumpMove2(x, y, index) {
-      this.index = index + 14;
-      this.x = x + 2;
-      this.y = y - 2;
-    },
-    JumpMove1: function JumpMove1(x, y, index) {
-      this.index = index + 18;
-      this.x = x + 2;
-      this.y = y + 2;
-    }
-  };
-
-  var player2Moves = {
-    Move1: function Move1(x, y, index) {
-      this.index = index - 9;
-      this.x = x - 1;
-      this.y = y - 1;
-    },
-    Move2: function Move2(x, y, index) {
-      this.index = index - 7;
-      this.x = x - 1;
-      this.y = y + 1;
-    },
-    JumpMove1: function JumpMove1(x, y, index) {
-      this.index = index - 18;
-      this.x = x - 2;
-      this.y = y - 2;
-    },
-    JumpMove2: function JumpMove2(x, y, index) {
-      this.index = index - 14;
-      this.x = x - 2;
-      this.y = y + 2;
-    }
-  };
-
-  return {
-    kingMoves: kingMoves,
-    player1Moves: player1Moves,
-    player2Moves: player2Moves
-  };
-});
 "use strict";
 
 app.controller('DashboardCtrl', function ($timeout, AuthFactory, $location, $routeParams) {
@@ -314,6 +110,8 @@ app.controller('GameCtrl', function ($timeout, BoardFact, $routeParams, $locatio
 	// 	e.cancelBubble = true;
 	// 	e.returnValue = 'reload';
 	// };
+	var player1Moves = MoveFact.player1Moves;
+	var player2Moves = MoveFact.player2Moves;
 
 	var gameId = $routeParams.gameid;
 	var userId = $cookies.get('userid');
@@ -389,7 +187,6 @@ app.controller('GameCtrl', function ($timeout, BoardFact, $routeParams, $locatio
 
 	//when a player chooses a king piece this function is called
 	game.chooseKing = function (e, piece, id) {
-		var kingMoves = MoveFact.kingMoves;
 		if (game.turn === piece.userid) {
 			var currentElement = e.currentTarget;
 			var currentSquare = HelperFact.getCurrentSquare(game.board, piece);
@@ -397,10 +194,10 @@ app.controller('GameCtrl', function ($timeout, BoardFact, $routeParams, $locatio
 			currentPiece.id = id;
 			$(currentElement).toggleClass('selected');
 			var takenSquares = HelperFact.getTakenSquares(currentPiece, game.pieces);
-			var move1 = new kingMoves.Move1(currentSquare.x, currentSquare.y, currentSquare.index);
-			var move2 = new kingMoves.Move2(currentSquare.x, currentSquare.y, currentSquare.index);
-			var move3 = new kingMoves.Move3(currentSquare.x, currentSquare.y, currentSquare.index);
-			var move4 = new kingMoves.Move4(currentSquare.x, currentSquare.y, currentSquare.index);
+			var move1 = new player1Moves.Move1(currentSquare.x, currentSquare.y, currentSquare.index);
+			var move2 = new player1Moves.Move2(currentSquare.x, currentSquare.y, currentSquare.index);
+			var move3 = new player2Moves.Move1(currentSquare.x, currentSquare.y, currentSquare.index);
+			var move4 = new player2Moves.Move2(currentSquare.x, currentSquare.y, currentSquare.index);
 			choice1 = HelperFact.getRegularMoves({
 				board: game.board,
 				move: move1,
@@ -424,10 +221,10 @@ app.controller('GameCtrl', function ($timeout, BoardFact, $routeParams, $locatio
 
 			//checks for possible jump moves
 			for (var key in game.board) {
-				var jumpMove1 = new kingMoves.JumpMove1(currentSquare.x, currentSquare.y, currentSquare.index);
-				var jumpMove2 = new kingMoves.JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
-				var jumpMove3 = new kingMoves.JumpMove3(currentSquare.x, currentSquare.y, currentSquare.index);
-				var jumpMove4 = new kingMoves.JumpMove4(currentSquare.x, currentSquare.y, currentSquare.index);
+				var jumpMove1 = new player1Moves.JumpMove1(currentSquare.x, currentSquare.y, currentSquare.index);
+				var jumpMove2 = new player1Moves.JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
+				var jumpMove3 = new player2Moves.JumpMove1(currentSquare.x, currentSquare.y, currentSquare.index);
+				var jumpMove4 = new player2Moves.JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
 				// checks to see if a jump move is possible
 				if (jumpMove1.index === game.board[key].index) {
 					for (var i = 0; i < takenSquares.length; i++) {
@@ -492,7 +289,6 @@ app.controller('GameCtrl', function ($timeout, BoardFact, $routeParams, $locatio
 
 	//when player 1 chooses a piece this function is called
 	game.choosePiecePlayer1 = function (e, piece, id) {
-		var player1Moves = MoveFact.player1Moves;
 
 		if (game.turn === piece.userid) {
 			var currentElement = e.currentTarget;
@@ -548,7 +344,6 @@ app.controller('GameCtrl', function ($timeout, BoardFact, $routeParams, $locatio
 
 	//same function as choosePiecePlayer1 except math for moves and jump criteria are different
 	game.choosePiecePlayer2 = function (e, piece, id) {
-		var player2Moves = MoveFact.player2Moves;
 		if (game.turn === piece.userid) {
 			var currentElement = e.currentTarget;
 			var currentSquare = HelperFact.getCurrentSquare(game.board, piece);
@@ -813,6 +608,167 @@ app.controller('LoginCtrl', function ($timeout, AuthFactory, $location, $cookies
 			$timeout();
 		}
 	});
+});
+'use strict';
+
+app.factory('AuthFactory', function ($location, $timeout, $cookies) {
+  firebase.auth().onAuthStateChanged(function (user) {
+    if (user) {
+      firebase.database().ref('/users/' + user.uid).set({
+        email: user.email
+      });
+      $cookies.put('userid', user.uid);
+      $cookies.put('email', user.email);
+      $location.path('/dashboard/' + user.uid);
+      $timeout();
+    } else {
+      $location.path('/');
+      $timeout();
+    }
+  });
+  return {
+    login: function login(email, password) {
+      firebase.auth().signInWithEmailAndPassword(email, password);
+    },
+    logout: function logout() {
+      firebase.auth().signOut();
+    },
+    register: function register(email, password) {
+      firebase.auth().createUserWithEmailAndPassword(email, password);
+    }
+  };
+});
+app.factory('UsersFact', function () {
+  var currentUser = firebase.auth().currentUser;
+  return {
+    user: currentUser
+  };
+});
+'use strict';
+
+app.factory('BoardFact', function () {
+  var row = 8;
+  var _squares = [];
+  var index = 0;
+  for (var x = 0; x < row; x++) {
+    for (var y = 0; y < row; y++) {
+      _squares.push({
+        'index': index,
+        'x': x,
+        'y': y
+      });
+      index++;
+    }
+  }
+  return {
+    squares: function squares() {
+      return _squares;
+    }
+  };
+});
+"use strict";
+
+app.factory('HelperFact', function () {
+  var getTakenSquares = function getTakenSquares(currentPiece, allPieces) {
+    var takenSquares = [];
+    for (var id in allPieces) {
+      if (allPieces[id].x === currentPiece.x && allPieces[id].y === currentPiece.y) {} else {
+        takenSquares.push({
+          x: allPieces[id].x,
+          y: allPieces[id].y,
+          player: allPieces[id].color
+        });
+      }
+    }
+    return takenSquares;
+  };
+
+  var getCurrentSquare = function getCurrentSquare(board, currentPiece) {
+    var currentSquare = void 0;
+    for (var key in board) {
+      if (currentPiece.x === board[key].y && currentPiece.y === board[key].x) {
+        currentSquare = board[key];
+      }
+    }
+    return currentSquare;
+  };
+
+  var getRegularMoves = function getRegularMoves(_ref) {
+    var board = _ref.board,
+        move = _ref.move,
+        takenSquares = _ref.takenSquares;
+
+    for (var key in board) {
+      if (move.index === board[key].index) {
+        for (var i = 0; i < takenSquares.length; i++) {
+          if (move.x === takenSquares[i].y && move.y === takenSquares[i].x) {} else {
+            return board[key];
+          }
+        }
+      }
+    }
+  };
+
+  return {
+    getTakenSquares: getTakenSquares,
+    getCurrentSquare: getCurrentSquare,
+    getRegularMoves: getRegularMoves
+  };
+});
+'use strict';
+
+app.factory('MoveFact', function () {
+
+  var player1Moves = {
+    Move1: function Move1(x, y, index) {
+      this.index = index + 9;
+      this.x = x + 1;
+      this.y = y + 1;
+    },
+    Move2: function Move2(x, y, index) {
+      this.index = index + 7;
+      this.x = x + 1;
+      this.y = y - 1;
+    },
+    JumpMove2: function JumpMove2(x, y, index) {
+      this.index = index + 14;
+      this.x = x + 2;
+      this.y = y - 2;
+    },
+    JumpMove1: function JumpMove1(x, y, index) {
+      this.index = index + 18;
+      this.x = x + 2;
+      this.y = y + 2;
+    }
+  };
+
+  var player2Moves = {
+    Move1: function Move1(x, y, index) {
+      this.index = index - 9;
+      this.x = x - 1;
+      this.y = y - 1;
+    },
+    Move2: function Move2(x, y, index) {
+      this.index = index - 7;
+      this.x = x - 1;
+      this.y = y + 1;
+    },
+    JumpMove1: function JumpMove1(x, y, index) {
+      this.index = index - 18;
+      this.x = x - 2;
+      this.y = y - 2;
+    },
+    JumpMove2: function JumpMove2(x, y, index) {
+      this.index = index - 14;
+      this.x = x - 2;
+      this.y = y + 2;
+    }
+  };
+
+  return {
+    player1Moves: player1Moves,
+    player2Moves: player2Moves
+  };
 });
 "use strict";
 

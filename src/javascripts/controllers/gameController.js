@@ -10,6 +10,9 @@ app.controller('GameCtrl', function (
 	// 	e.cancelBubble = true;
 	// 	e.returnValue = 'reload';
 	// };
+	let player1Moves = MoveFact.player1Moves;
+	let player2Moves = MoveFact.player2Moves;
+
 
 	const gameId = $routeParams.gameid;
 	var userId = $cookies.get('userid');
@@ -85,7 +88,6 @@ app.controller('GameCtrl', function (
 
 	//when a player chooses a king piece this function is called
 	game.chooseKing = (e, piece, id) => {
-		let kingMoves = MoveFact.kingMoves;
 		if (game.turn === piece.userid) {
 			var currentElement = e.currentTarget;
 			let currentSquare = HelperFact.getCurrentSquare(game.board, piece);
@@ -93,10 +95,10 @@ app.controller('GameCtrl', function (
 			currentPiece.id = id;
 			$(currentElement).toggleClass('selected');
 			let takenSquares = HelperFact.getTakenSquares(currentPiece, game.pieces);
-			let move1 = new kingMoves.Move1(currentSquare.x, currentSquare.y, currentSquare.index);
-			let move2 = new kingMoves.Move2(currentSquare.x, currentSquare.y, currentSquare.index);
-			let move3 = new kingMoves.Move3(currentSquare.x, currentSquare.y, currentSquare.index);
-			let move4 = new kingMoves.Move4(currentSquare.x, currentSquare.y, currentSquare.index);
+			let move1 = new player1Moves.Move1(currentSquare.x, currentSquare.y, currentSquare.index);
+			let move2 = new player1Moves.Move2(currentSquare.x, currentSquare.y, currentSquare.index);
+			let move3 = new player2Moves.Move1(currentSquare.x, currentSquare.y, currentSquare.index);
+			let move4 = new player2Moves.Move2(currentSquare.x, currentSquare.y, currentSquare.index);
 			choice1 = HelperFact.getRegularMoves({
 				board: game.board,
 				move: move1,
@@ -121,10 +123,10 @@ app.controller('GameCtrl', function (
 
 			//checks for possible jump moves
 			for (let key in game.board) {
-				var jumpMove1 = new kingMoves.JumpMove1(currentSquare.x, currentSquare.y, currentSquare.index);
-				var jumpMove2 = new kingMoves.JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
-				var jumpMove3 = new kingMoves.JumpMove3(currentSquare.x, currentSquare.y, currentSquare.index);
-				var jumpMove4 = new kingMoves.JumpMove4(currentSquare.x, currentSquare.y, currentSquare.index);
+				var jumpMove1 = new player1Moves.JumpMove1(currentSquare.x, currentSquare.y, currentSquare.index);
+				var jumpMove2 = new player1Moves.JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
+				var jumpMove3 = new player2Moves.JumpMove1(currentSquare.x, currentSquare.y, currentSquare.index);
+				var jumpMove4 = new player2Moves.JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
 				// checks to see if a jump move is possible
 				if (jumpMove1.index === game.board[key].index) {
 					for (let i = 0; i < takenSquares.length; i++) {
@@ -189,7 +191,6 @@ app.controller('GameCtrl', function (
 
 	//when player 1 chooses a piece this function is called
 	game.choosePiecePlayer1 = (e, piece, id) => {
-		let player1Moves = MoveFact.player1Moves;
 
 		if (game.turn === piece.userid) {
 			let currentElement = e.currentTarget;
@@ -247,7 +248,6 @@ app.controller('GameCtrl', function (
 
 	//same function as choosePiecePlayer1 except math for moves and jump criteria are different
 	game.choosePiecePlayer2 = (e, piece, id) => {
-		let player2Moves = MoveFact.player2Moves;
 		if (game.turn === piece.userid) {
 			let currentElement = e.currentTarget;
 			let currentSquare = HelperFact.getCurrentSquare(game.board, piece);
