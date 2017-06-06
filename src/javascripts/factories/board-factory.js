@@ -1,3 +1,4 @@
+'use strict';
 app.factory('BoardFact', () => {
   const row = 8;
   var squares = [];

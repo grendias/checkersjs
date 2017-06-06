@@ -1,5 +1,5 @@
 "use strict";
-angular.module('app').config(($routeProvider) => ($routeProvider
+app.config(($routeProvider) => ($routeProvider
 	.when('/', {
 		controller: 'LoginCtrl',
 		controllerAs: 'log',

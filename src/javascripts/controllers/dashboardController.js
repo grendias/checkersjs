@@ -1,5 +1,5 @@
 "use strict";
-angular.module('app').controller('DashboardCtrl', function ($timeout, AuthFactory, $location, $routeParams) {
+app.controller('DashboardCtrl', function ($timeout, AuthFactory, $location, $routeParams) {
 	const dash = this;
 	var uid = $routeParams.uid;
 	var userEmail;
@@ -10,8 +10,8 @@ angular.module('app').controller('DashboardCtrl', function ($timeout, AuthFactor
 	});
 
 	//gets user email
-	firebase.database().ref('users/').once('value').then(function(snap) {
-		for(let key in snap.val()) {
+	firebase.database().ref('users/').once('value').then(function (snap) {
+		for (let key in snap.val()) {
 			if (key === uid) {
 				let fullEmail = snap.val()[key].email;
 				let index = fullEmail.indexOf('@');
@@ -34,15 +34,15 @@ angular.module('app').controller('DashboardCtrl', function ($timeout, AuthFactor
 		for (let key in dash.games) {
 			if (dash.games[key].player1 === uid) {
 				var pieceCount = 8;
-				for(let i=0; i<pieceCount; i++) {
+				for (let i = 0; i < pieceCount; i++) {
 					let y = Math.floor(i / 4);
-					let x = (i % 4) * 2 + (1 - y%2);
+					let x = (i % 4) * 2 + (1 - y % 2);
 					firebase.database().ref(`/${key}/`).push({
 						'gameId': key,
 						'userid': uid,
 						'color': 'red',
-						'top':  (y * 70)+'px',
-						'left': (x * 70)+'px',
+						'top': (y * 70) + 'px',
+						'left': (x * 70) + 'px',
 						'x': x,
 						'y': y,
 						'king': false,
@@ -62,15 +62,15 @@ angular.module('app').controller('DashboardCtrl', function ($timeout, AuthFactor
 		});
 		var pieceCount = 8;
 		//creates player 2 pieces
-		for(let i=0; i<pieceCount; i++) {
-			let y = Math.floor(i/4) + 6;
-			let x = (i % 4) * 2 + (1-y%2);
+		for (let i = 0; i < pieceCount; i++) {
+			let y = Math.floor(i / 4) + 6;
+			let x = (i % 4) * 2 + (1 - y % 2);
 			firebase.database().ref(`/${gameId}/`).push({
 				'gameId': gameId,
 				'userid': uid,
 				'color': 'white',
-				'top':  (y * 70)+'px',
-				'left': (x * 70)+'px',
+				'top': (y * 70) + 'px',
+				'left': (x * 70) + 'px',
 				'x': x,
 				'y': y,
 				'king': false,

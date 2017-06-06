@@ -1,5 +1,5 @@
 "use strict";
-angular.module('app').controller('LoginCtrl', function ($timeout, AuthFactory, $location, $cookies) {
+app.controller('LoginCtrl', function ($timeout, AuthFactory, $location, $cookies) {
 	const log = this;
 	log.heading = "login";
 	log.login = function () {

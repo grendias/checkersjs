@@ -1,25 +1,8 @@
 "use strict";
 
-angular.module('app', ['ngRoute', 'ngCookies']).factory('BoardFact', function () {
-	var row = 8;
-	var _squares = [];
-	var index = 0;
-	for (var x = 0; x < row; x++) {
-		for (var y = 0; y < row; y++) {
-			_squares.push({
-				'index': index,
-				'x': x,
-				'y': y
-			});
-			index++;
-		}
-	}
-	return {
-		squares: function squares() {
-			return _squares;
-		}
-	};
-}).config(function () {
+var app = angular.module('app', ['ngRoute', 'ngCookies']);
+
+app.config(function () {
 	var config = {
 		apiKey: "AIzaSyBrbaIJrMqiL1Ho_rM35FgieqOyAjF-BiE",
 		authDomain: "checkers-f4624.firebaseapp.com",
@@ -27,58 +10,10 @@ angular.module('app', ['ngRoute', 'ngCookies']).factory('BoardFact', function ()
 		storageBucket: "checkers-f4624.appspot.com"
 	};
 	firebase.initializeApp(config);
-}).factory('AuthFactory', function ($location, $timeout, $cookies) {
-	firebase.auth().onAuthStateChanged(function (user) {
-		if (user) {
-			firebase.database().ref('/users/' + user.uid).set({
-				email: user.email
-			});
-			$cookies.put('userid', user.uid);
-			$cookies.put('email', user.email);
-			$location.path('/dashboard/' + user.uid);
-			$timeout();
-		} else {
-			$location.path('/');
-			$timeout();
-		}
-	});
-	return {
-		login: function login(email, password) {
-			firebase.auth().signInWithEmailAndPassword(email, password);
-		},
-		logout: function logout() {
-			firebase.auth().signOut();
-		},
-		register: function register(email, password) {
-			firebase.auth().createUserWithEmailAndPassword(email, password);
-		}
-	};
-}).factory('UsersFact', function () {
-	var currentUser = firebase.auth().currentUser;
-	return {
-		user: currentUser
-	};
 });
 "use strict";
 
-angular.module('app').config(function ($routeProvider) {
-	return $routeProvider.when('/', {
-		controller: 'LoginCtrl',
-		controllerAs: 'log',
-		templateUrl: 'javascripts/login.html'
-	}).when('/dashboard/:uid', {
-		controller: 'DashboardCtrl',
-		controllerAs: 'dash',
-		templateUrl: 'javascripts/dashboard.html'
-	}).when('/checkers/:gameid', {
-		controller: 'GameCtrl',
-		controllerAs: 'game',
-		templateUrl: 'javascripts/game.html'
-	});
-});
-"use strict";
-
-angular.module('app').controller('DashboardCtrl', function ($timeout, AuthFactory, $location, $routeParams) {
+app.controller('DashboardCtrl', function ($timeout, AuthFactory, $location, $routeParams) {
 	var dash = this;
 	var uid = $routeParams.uid;
 	var userEmail;
@@ -165,8 +100,14 @@ angular.module('app').controller('DashboardCtrl', function ($timeout, AuthFactor
 });
 "use strict";
 
-angular.module('app').controller('GameCtrl', function ($timeout, BoardFact, $routeParams, $location, UsersFact, $cookies, $window) {
+app.controller('GameCtrl', function ($timeout, BoardFact, $routeParams, $location, UsersFact, $cookies, $window, MoveFact, HelperFact) {
 	var game = this;
+	var player2Moves = MoveFact.player2Moves;
+	var kingMoves = MoveFact.kingMoves;
+	var player1Moves = MoveFact.player1Moves;
+	var gameId = $routeParams.gameid;
+	var userId = $cookies.get('userid');
+	var userEmail = $cookies.get('email');
 
 	$window.onbeforeunload = function (e) {
 		e = e || $window.event;
@@ -176,10 +117,15 @@ angular.module('app').controller('GameCtrl', function ($timeout, BoardFact, $rou
 		e.returnValue = 'reload';
 	};
 
-	var gameId = $routeParams.gameid;
-	var userId = $cookies.get('userid');
-	var userEmail = $cookies.get('email');
-	var currentPiece, choice1, choice2, choice3, choice4, jumpChoice1, jumpChoice2, jumpChoice3, jumpChoice4;
+	var currentPiece = void 0,
+	    choice1 = void 0,
+	    choice2 = void 0,
+	    choice3 = void 0,
+	    choice4 = void 0,
+	    jumpChoice1 = void 0,
+	    jumpChoice2 = void 0,
+	    jumpChoice3 = void 0,
+	    jumpChoice4 = void 0;
 	game.heading = "Checkers";
 	game.pieces = {};
 	game.messages = {};
@@ -250,69 +196,19 @@ angular.module('app').controller('GameCtrl', function ($timeout, BoardFact, $rou
 
 	//when a player chooses a king piece this function is called
 	game.chooseKing = function (e, piece, id) {
-		//functions for the possible moves a king could make
-		function Move1(x, y, index) {
-			this.index = index + 9;
-			this.x = x + 1;
-			this.y = y + 1;
-		}
-		function Move2(x, y, index) {
-			this.index = index + 7;
-			this.x = x + 1;
-			this.y = y - 1;
-		}
-		function JumpMove2(x, y, index) {
-			this.index = index + 14;
-			this.x = x + 2;
-			this.y = y - 2;
-		}
-		function JumpMove1(x, y, index) {
-			this.index = index + 18;
-			this.x = x + 2;
-			this.y = y + 2;
-		}
-		function Move3(x, y, index) {
-			this.index = index - 9;
-			this.x = x - 1;
-			this.y = y - 1;
-		}
-		function Move4(x, y, index) {
-			this.index = index - 7;
-			this.x = x - 1;
-			this.y = y + 1;
-		}
-		function JumpMove3(x, y, index) {
-			this.index = index - 18;
-			this.x = x - 2;
-			this.y = y - 2;
-		}
-		function JumpMove4(x, y, index) {
-			this.index = index - 14;
-			this.x = x - 2;
-			this.y = y + 2;
-		}
-
 		if (game.turn === piece.userid) {
-			var currentElement = e.currentTarget;
 			var currentSquare;
 			currentPiece = piece;
 			currentPiece.id = id;
-			$(currentElement).toggleClass('selected');
-			var takenSquares = [];
+
+			$(e.currentTarget).toggleClass('selected');
+			var takenSquares = HelperFact.getTakenSquares(currentPiece, game.pieces);
 			var move1;
 			var move2;
 			var move3;
 			var move4;
 			//finds where the other pieces are
-			for (var _id in game.pieces) {
-				if (game.pieces[_id].x === piece.x && game.pieces[_id].y === piece.y) {} else {
-					takenSquares.push({
-						x: game.pieces[_id].x,
-						y: game.pieces[_id].y,
-						player: game.pieces[_id].color
-					});
-				}
-			}
+
 			//finds which board square the piece is in
 			for (var key in game.board) {
 				if (piece.x === game.board[key].y && piece.y === game.board[key].x) {
@@ -321,10 +217,10 @@ angular.module('app').controller('GameCtrl', function ($timeout, BoardFact, $rou
 			}
 			//looks for possible non-jump moves
 			for (var _key in game.board) {
-				move1 = new Move1(currentSquare.x, currentSquare.y, currentSquare.index);
-				move2 = new Move2(currentSquare.x, currentSquare.y, currentSquare.index);
-				move3 = new Move3(currentSquare.x, currentSquare.y, currentSquare.index);
-				move4 = new Move4(currentSquare.x, currentSquare.y, currentSquare.index);
+				move1 = new kingMoves.Move1(currentSquare.x, currentSquare.y, currentSquare.index);
+				move2 = new kingMoves.Move2(currentSquare.x, currentSquare.y, currentSquare.index);
+				move3 = new kingMoves.Move3(currentSquare.x, currentSquare.y, currentSquare.index);
+				move4 = new kingMoves.Move4(currentSquare.x, currentSquare.y, currentSquare.index);
 				//checks to see if possible move is empty
 				if (move1.index === game.board[_key].index) {
 					for (var i = 0; i < takenSquares.length; i++) {
@@ -354,10 +250,10 @@ angular.module('app').controller('GameCtrl', function ($timeout, BoardFact, $rou
 			}
 			//checks for possible jump moves
 			for (var _key2 in game.board) {
-				var jumpMove1 = new JumpMove1(currentSquare.x, currentSquare.y, currentSquare.index);
-				var jumpMove2 = new JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
-				var jumpMove3 = new JumpMove3(currentSquare.x, currentSquare.y, currentSquare.index);
-				var jumpMove4 = new JumpMove4(currentSquare.x, currentSquare.y, currentSquare.index);
+				var jumpMove1 = new kingMoves.JumpMove1(currentSquare.x, currentSquare.y, currentSquare.index);
+				var jumpMove2 = new kingMoves.JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
+				var jumpMove3 = new kingMoves.JumpMove3(currentSquare.x, currentSquare.y, currentSquare.index);
+				var jumpMove4 = new kingMoves.JumpMove4(currentSquare.x, currentSquare.y, currentSquare.index);
 				// checks to see if a jump move is possible
 				if (jumpMove1.index === game.board[_key2].index) {
 					for (var _i4 = 0; _i4 < takenSquares.length; _i4++) {
@@ -422,44 +318,20 @@ angular.module('app').controller('GameCtrl', function ($timeout, BoardFact, $rou
 
 	//when player 1 chooses a piece this function is called
 	game.choosePiecePlayer1 = function (e, piece, id) {
-		function Move1(x, y, index) {
-			this.index = index + 9;
-			this.x = x + 1;
-			this.y = y + 1;
-		}
-		function Move2(x, y, index) {
-			this.index = index + 7;
-			this.x = x + 1;
-			this.y = y - 1;
-		}
-		function JumpMove2(x, y, index) {
-			this.index = index + 14;
-			this.x = x + 2;
-			this.y = y - 2;
-		}
-		function JumpMove1(x, y, index) {
-			this.index = index + 18;
-			this.x = x + 2;
-			this.y = y + 2;
-		}
+
 		if (game.turn === piece.userid) {
-			var currentElement = e.currentTarget;
-			var currentSquare;
+			var currentSquare = void 0;
 			currentPiece = piece;
 			currentPiece.id = id;
-			$(currentElement).toggleClass('selected');
-			var takenSquares = [];
-			var move1, move2;
+			console.log("piece", piece);
+			console.log("currentPiece", currentPiece);
+			console.log("e.currentTarget", e.currentTarget);
+			$(e.currentTarget).toggleClass('selected');
+			var takenSquares = HelperFact.getTakenSquares(currentPiece, game.pieces);
+			var move1 = void 0,
+			    move2 = void 0;
 			//finds the position of all the pieces
-			for (var _id2 in game.pieces) {
-				if (game.pieces[_id2].x === piece.x && game.pieces[_id2].y === piece.y) {} else {
-					takenSquares.push({
-						x: game.pieces[_id2].x,
-						y: game.pieces[_id2].y,
-						player: game.pieces[_id2].color
-					});
-				}
-			}
+
 			//finds the position of the current piece
 			for (var key in game.board) {
 				if (piece.x === game.board[key].y && piece.y === game.board[key].x) {
@@ -468,8 +340,8 @@ angular.module('app').controller('GameCtrl', function ($timeout, BoardFact, $rou
 			}
 			//looks for non-jump moves to see if they are empty
 			for (var _key3 in game.board) {
-				move1 = new Move1(currentSquare.x, currentSquare.y, currentSquare.index);
-				move2 = new Move2(currentSquare.x, currentSquare.y, currentSquare.index);
+				move1 = new player1Moves.Move1(currentSquare.x, currentSquare.y, currentSquare.index);
+				move2 = new player1Moves.Move2(currentSquare.x, currentSquare.y, currentSquare.index);
 				if (move1.index === game.board[_key3].index) {
 					for (var i = 0; i < takenSquares.length; i++) {
 						if (move1.x === takenSquares[i].y && move1.y === takenSquares[i].x) {} else {
@@ -486,8 +358,8 @@ angular.module('app').controller('GameCtrl', function ($timeout, BoardFact, $rou
 			}
 			//checks for jump moves over white pieces and checks if they are empty
 			for (var _key4 in game.board) {
-				var jumpMove1 = new JumpMove1(currentSquare.x, currentSquare.y, currentSquare.index);
-				var jumpMove2 = new JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
+				var jumpMove1 = new player1Moves.JumpMove1(currentSquare.x, currentSquare.y, currentSquare.index);
+				var jumpMove2 = new player1Moves.JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
 				if (jumpMove1.index === game.board[_key4].index) {
 					for (var _i9 = 0; _i9 < takenSquares.length; _i9++) {
 						if (move1.x === takenSquares[_i9].y && move1.y === takenSquares[_i9].x) {
@@ -516,44 +388,14 @@ angular.module('app').controller('GameCtrl', function ($timeout, BoardFact, $rou
 
 	//same function as choosePiecePlayer1 except math for moves and jump criteria are different
 	game.choosePiecePlayer2 = function (e, piece, id) {
-		function Move1(x, y, index) {
-			this.index = index - 9;
-			this.x = x - 1;
-			this.y = y - 1;
-		}
-		function Move2(x, y, index) {
-			this.index = index - 7;
-			this.x = x - 1;
-			this.y = y + 1;
-		}
-		function JumpMove1(x, y, index) {
-			this.index = index - 18;
-			this.x = x - 2;
-			this.y = y - 2;
-		}
-		function JumpMove2(x, y, index) {
-			this.index = index - 14;
-			this.x = x - 2;
-			this.y = y + 2;
-		}
 		if (game.turn === piece.userid) {
-			var currentElement = e.currentTarget;
-			var currentSquare;
+			var currentSquare = void 0;
 			currentPiece = piece;
 			currentPiece.id = id;
-			$(currentElement).toggleClass('selected');
-			var takenSquares = [];
-			var move1;
-			var move2;
-			for (var _id3 in game.pieces) {
-				if (game.pieces[_id3].x === piece.x && game.pieces[_id3].y === piece.y) {} else {
-					takenSquares.push({
-						x: game.pieces[_id3].x,
-						y: game.pieces[_id3].y,
-						player: game.pieces[_id3].color
-					});
-				}
-			}
+			$(e.currentTarget).toggleClass('selected');
+			var takenSquares = HelperFact.getTakenSquares(currentPiece, game.pieces);
+			var move1 = void 0;
+			var move2 = void 0;
 
 			for (var key in game.board) {
 				if (piece.x === game.board[key].y && piece.y === game.board[key].x) {
@@ -561,8 +403,8 @@ angular.module('app').controller('GameCtrl', function ($timeout, BoardFact, $rou
 				}
 			}
 			for (var _key5 in game.board) {
-				move1 = new Move1(currentSquare.x, currentSquare.y, currentSquare.index);
-				move2 = new Move2(currentSquare.x, currentSquare.y, currentSquare.index);
+				move1 = new player2Moves.Move1(currentSquare.x, currentSquare.y, currentSquare.index);
+				move2 = new player2Moves.Move2(currentSquare.x, currentSquare.y, currentSquare.index);
 				if (move1.index === game.board[_key5].index) {
 					for (var i = 0; i < takenSquares.length; i++) {
 						if (move1.x === takenSquares[i].y && move1.y === takenSquares[i].x) {} else {
@@ -578,8 +420,8 @@ angular.module('app').controller('GameCtrl', function ($timeout, BoardFact, $rou
 				}
 			}
 			for (var _key6 in game.board) {
-				var jumpMove1 = new JumpMove1(currentSquare.x, currentSquare.y, currentSquare.index);
-				var jumpMove2 = new JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
+				var jumpMove1 = new player2Moves.JumpMove1(currentSquare.x, currentSquare.y, currentSquare.index);
+				var jumpMove2 = new player2Moves.JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
 				if (jumpMove1.index === game.board[_key6].index) {
 					for (var _i12 = 0; _i12 < takenSquares.length; _i12++) {
 						if (move1.x === takenSquares[_i12].y && move1.y === takenSquares[_i12].x) {
@@ -619,7 +461,10 @@ angular.module('app').controller('GameCtrl', function ($timeout, BoardFact, $rou
 				x: square.y
 			});
 			$timeout();
-			$('#' + currentPiece.id).animate({ top: newTop, left: newLeft }, "slide");
+			$('#' + currentPiece.id).animate({
+				top: newTop,
+				left: newLeft
+			}, "slide");
 
 			//checks to see if a piece will be kinged
 			if (currentPiece.color === 'red' && square.x === 7) {
@@ -791,7 +636,7 @@ angular.module('app').controller('GameCtrl', function ($timeout, BoardFact, $rou
 });
 "use strict";
 
-angular.module('app').controller('LoginCtrl', function ($timeout, AuthFactory, $location, $cookies) {
+app.controller('LoginCtrl', function ($timeout, AuthFactory, $location, $cookies) {
 	var log = this;
 	log.heading = "login";
 	log.login = function () {
@@ -805,17 +650,210 @@ angular.module('app').controller('LoginCtrl', function ($timeout, AuthFactory, $
 
 	firebase.auth().onAuthStateChanged(function (user) {
 		if (user) {
-			firebase.database().ref('/users/' + user.uid).set({
+			firebase.database().ref("/users/" + user.uid).set({
 				email: user.email,
 				name: user.displayName
 			});
 			$cookies.put('userid', user.uid);
 			$cookies.put('email', user.email);
-			$location.path('/dashboard/' + user.uid);
+			$location.path("/dashboard/" + user.uid);
 			$timeout();
 		} else {
 			$location.path('/');
 			$timeout();
 		}
+	});
+});
+'use strict';
+
+app.factory('AuthFactory', function ($location, $timeout, $cookies) {
+  firebase.auth().onAuthStateChanged(function (user) {
+    if (user) {
+      firebase.database().ref('/users/' + user.uid).set({
+        email: user.email
+      });
+      $cookies.put('userid', user.uid);
+      $cookies.put('email', user.email);
+      $location.path('/dashboard/' + user.uid);
+      $timeout();
+    } else {
+      $location.path('/');
+      $timeout();
+    }
+  });
+  return {
+    login: function login(email, password) {
+      firebase.auth().signInWithEmailAndPassword(email, password);
+    },
+    logout: function logout() {
+      firebase.auth().signOut();
+    },
+    register: function register(email, password) {
+      firebase.auth().createUserWithEmailAndPassword(email, password);
+    }
+  };
+});
+app.factory('UsersFact', function () {
+  var currentUser = firebase.auth().currentUser;
+  return {
+    user: currentUser
+  };
+});
+'use strict';
+
+app.factory('BoardFact', function () {
+  var row = 8;
+  var _squares = [];
+  var index = 0;
+  for (var x = 0; x < row; x++) {
+    for (var y = 0; y < row; y++) {
+      _squares.push({
+        'index': index,
+        'x': x,
+        'y': y
+      });
+      index++;
+    }
+  }
+  return {
+    squares: function squares() {
+      return _squares;
+    }
+  };
+});
+"use strict";
+
+app.factory('HelperFact', function () {
+  var getTakenSquares = function getTakenSquares(currentPiece, allPieces) {
+    var takenSquares = [];
+    for (var id in allPieces) {
+      if (allPieces[id].x === currentPiece.x && allPieces[id].y === currentPiece.y) {} else {
+        takenSquares.push({
+          x: allPieces[id].x,
+          y: allPieces[id].y,
+          player: allPieces[id].color
+        });
+      }
+    }
+    return takenSquares;
+  };
+
+  return {
+    getTakenSquares: getTakenSquares
+  };
+});
+'use strict';
+
+app.factory('MoveFact', function () {
+  var kingMoves = {
+    Move1: function Move1(x, y, index) {
+      this.index = index + 9;
+      this.x = x + 1;
+      this.y = y + 1;
+    },
+    Move2: function Move2(x, y, index) {
+      this.index = index + 7;
+      this.x = x + 1;
+      this.y = y - 1;
+    },
+    JumpMove2: function JumpMove2(x, y, index) {
+      this.index = index + 14;
+      this.x = x + 2;
+      this.y = y - 2;
+    },
+    JumpMove1: function JumpMove1(x, y, index) {
+      this.index = index + 18;
+      this.x = x + 2;
+      this.y = y + 2;
+    },
+    Move3: function Move3(x, y, index) {
+      this.index = index - 9;
+      this.x = x - 1;
+      this.y = y - 1;
+    },
+    Move4: function Move4(x, y, index) {
+      this.index = index - 7;
+      this.x = x - 1;
+      this.y = y + 1;
+    },
+    JumpMove3: function JumpMove3(x, y, index) {
+      this.index = index - 18;
+      this.x = x - 2;
+      this.y = y - 2;
+    },
+    JumpMove4: function JumpMove4(x, y, index) {
+      this.index = index - 14;
+      this.x = x - 2;
+      this.y = y + 2;
+    }
+  };
+
+  var player1Moves = {
+    Move1: function Move1(x, y, index) {
+      this.index = index + 9;
+      this.x = x + 1;
+      this.y = y + 1;
+    },
+    Move2: function Move2(x, y, index) {
+      this.index = index + 7;
+      this.x = x + 1;
+      this.y = y - 1;
+    },
+    JumpMove2: function JumpMove2(x, y, index) {
+      this.index = index + 14;
+      this.x = x + 2;
+      this.y = y - 2;
+    },
+    JumpMove1: function JumpMove1(x, y, index) {
+      this.index = index + 18;
+      this.x = x + 2;
+      this.y = y + 2;
+    }
+  };
+
+  var player2Moves = {
+    Move1: function Move1(x, y, index) {
+      this.index = index - 9;
+      this.x = x - 1;
+      this.y = y - 1;
+    },
+    Move2: function Move2(x, y, index) {
+      this.index = index - 7;
+      this.x = x - 1;
+      this.y = y + 1;
+    },
+    JumpMove1: function JumpMove1(x, y, index) {
+      this.index = index - 18;
+      this.x = x - 2;
+      this.y = y - 2;
+    },
+    JumpMove2: function JumpMove2(x, y, index) {
+      this.index = index - 14;
+      this.x = x - 2;
+      this.y = y + 2;
+    }
+  };
+
+  return {
+    kingMoves: kingMoves,
+    player1Moves: player1Moves,
+    player2Moves: player2Moves
+  };
+});
+"use strict";
+
+app.config(function ($routeProvider) {
+	return $routeProvider.when('/', {
+		controller: 'LoginCtrl',
+		controllerAs: 'log',
+		templateUrl: 'javascripts/login.html'
+	}).when('/dashboard/:uid', {
+		controller: 'DashboardCtrl',
+		controllerAs: 'dash',
+		templateUrl: 'javascripts/dashboard.html'
+	}).when('/checkers/:gameid', {
+		controller: 'GameCtrl',
+		controllerAs: 'game',
+		templateUrl: 'javascripts/game.html'
 	});
 });

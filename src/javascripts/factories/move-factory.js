@@ -1,3 +1,4 @@
+'use strict';
 app.factory('MoveFact', () => {
   let kingMoves = {
     Move1: function (x, y, index) {

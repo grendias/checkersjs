@@ -1,3 +1,4 @@
+'use strict';
 app.factory('AuthFactory', ($location, $timeout, $cookies) => {
   firebase.auth().onAuthStateChanged((user) => {
     if (user) {
