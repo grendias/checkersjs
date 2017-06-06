@@ -102,25 +102,49 @@ app.controller('DashboardCtrl', function ($timeout, AuthFactory, $location, $rou
 
 app.controller('GameCtrl', function ($timeout, BoardFact, $routeParams, $location, UsersFact, $cookies, $window, MoveFact, HelperFact) {
 	var game = this;
-
-	// $window.onbeforeunload = function (e) {
-	// 	e = e || $window.event;
-	// 	console.log(e);
-	// 	e.preventDefault = true;
-	// 	e.cancelBubble = true;
-	// 	e.returnValue = 'reload';
-	// };
-	var player1Moves = MoveFact.player1Moves;
-	var player2Moves = MoveFact.player2Moves;
-
 	var gameId = $routeParams.gameid;
 	var userId = $cookies.get('userid');
 	var userEmail = $cookies.get('email');
-	var currentPiece, choice1, choice2, choice3, choice4, jumpChoice1, jumpChoice2, jumpChoice3, jumpChoice4;
+
+	var player1Moves = MoveFact.player1Moves;
+	var player2Moves = MoveFact.player2Moves;
+	var currentPiece = void 0,
+	    choice1 = void 0,
+	    choice2 = void 0,
+	    choice3 = void 0,
+	    choice4 = void 0,
+	    jumpChoice1 = void 0,
+	    jumpChoice2 = void 0,
+	    jumpChoice3 = void 0,
+	    jumpChoice4 = void 0;
+
 	game.heading = "Checkers";
 	game.pieces = {};
 	game.messages = {};
 	game.board = BoardFact.squares();
+	game.chckBrd = function (x, y) {
+		//function to create checkerboard pattern
+		var oddX = x % 2;
+		var oddY = y % 2;
+		return oddX ^ oddY;
+	};
+
+	if (game.player1Id === userId) {
+		game.playerEmail = game.player1Email;
+		game.playerColor = 'red';
+		game.player = '1';
+	} else if (game.player2Id === userId) {
+		game.playerEmail = game.player2Email;
+		game.playerColor = 'white';
+		game.player = '2';
+	}
+
+	game.toggleTurn = function () {
+		//determines who's turn it is
+		if (game.turn === userId) {
+			return true;
+		}
+	};
 
 	firebase.database().ref('games/' + gameId + '/').on('value', function (snap) {
 		game.turn = snap.val().turn;
@@ -147,25 +171,8 @@ app.controller('GameCtrl', function ($timeout, BoardFact, $routeParams, $locatio
 		}
 	});
 
-	if (game.player1Id === userId) {
-		game.playerEmail = game.player1Email;
-		game.playerColor = 'red';
-		game.player = '1';
-	} else if (game.player2Id === userId) {
-		game.playerEmail = game.player2Email;
-		game.playerColor = 'white';
-		game.player = '2';
-	}
-
-	//function to create checkerboard pattern
-	game.chckBrd = function (x, y) {
-		var oddX = x % 2;
-		var oddY = y % 2;
-		return oddX ^ oddY;
-	};
-
-	//function to reset player moves
 	function removeSelected() {
+		//function to reset player moves
 		currentPiece = null;
 		choice1 = null;
 		choice2 = null;
@@ -178,22 +185,14 @@ app.controller('GameCtrl', function ($timeout, BoardFact, $routeParams, $locatio
 		$('.selected').removeClass('selected');
 	}
 
-	//determines who's turn it is
-	game.toggleTurn = function () {
-		if (game.turn === userId) {
-			return true;
-		}
-	};
-
-	//when a player chooses a king piece this function is called
 	game.chooseKing = function (e, piece, id) {
+		//when a player chooses a king piece this function is called
 		if (game.turn === piece.userid) {
-			var currentElement = e.currentTarget;
-			var currentSquare = HelperFact.getCurrentSquare(game.board, piece);
+			$(e.currentTarget).toggleClass('selected');
 			currentPiece = piece;
 			currentPiece.id = id;
-			$(currentElement).toggleClass('selected');
-			var takenSquares = HelperFact.getTakenSquares(currentPiece, game.pieces),
+			var currentSquare = HelperFact.getCurrentSquare(game.board, piece),
+			    takenSquares = HelperFact.getTakenSquares(currentPiece, game.pieces),
 			    move1 = new player1Moves.Move1(currentSquare.x, currentSquare.y, currentSquare.index),
 			    move2 = new player1Moves.Move2(currentSquare.x, currentSquare.y, currentSquare.index),
 			    move3 = new player2Moves.Move1(currentSquare.x, currentSquare.y, currentSquare.index),
@@ -254,22 +253,18 @@ app.controller('GameCtrl', function ($timeout, BoardFact, $routeParams, $locatio
 		}
 	};
 
-	//when player 1 chooses a piece this function is called
 	game.choosePiecePlayer1 = function (e, piece, id) {
-
+		//when player 1 chooses a piece this function is called
 		if (game.turn === piece.userid) {
-			var currentElement = e.currentTarget;
-			var currentSquare = HelperFact.getCurrentSquare(game.board, piece);
+			$(e.currentTarget).toggleClass('selected');
 			currentPiece = piece;
 			currentPiece.id = id;
-			$(currentElement).toggleClass('selected');
-			var takenSquares = HelperFact.getTakenSquares(currentPiece, game.pieces);
-
-			//looks for non-jump moves to see if they are empty
-			var move1 = new player1Moves.Move1(currentSquare.x, currentSquare.y, currentSquare.index);
-			var move2 = new player1Moves.Move2(currentSquare.x, currentSquare.y, currentSquare.index);
-			var jumpMove1 = new player1Moves.JumpMove1(currentSquare.x, currentSquare.y, currentSquare.index);
-			var jumpMove2 = new player1Moves.JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
+			var currentSquare = HelperFact.getCurrentSquare(game.board, piece),
+			    takenSquares = HelperFact.getTakenSquares(currentPiece, game.pieces),
+			    move1 = new player1Moves.Move1(currentSquare.x, currentSquare.y, currentSquare.index),
+			    move2 = new player1Moves.Move2(currentSquare.x, currentSquare.y, currentSquare.index),
+			    jumpMove1 = new player1Moves.JumpMove1(currentSquare.x, currentSquare.y, currentSquare.index),
+			    jumpMove2 = new player1Moves.JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
 
 			choice1 = HelperFact.getRegularMove({
 				board: game.board,
@@ -298,19 +293,18 @@ app.controller('GameCtrl', function ($timeout, BoardFact, $routeParams, $locatio
 		}
 	};
 
-	//same function as choosePiecePlayer1 except math for moves and jump criteria are different
 	game.choosePiecePlayer2 = function (e, piece, id) {
+		//same function as choosePiecePlayer1 except math for moves and jump criteria are different
 		if (game.turn === piece.userid) {
-			var currentElement = e.currentTarget;
-			var currentSquare = HelperFact.getCurrentSquare(game.board, piece);
+			$(e.currentTarget).toggleClass('selected');
 			currentPiece = piece;
 			currentPiece.id = id;
-			$(currentElement).toggleClass('selected');
-			var takenSquares = HelperFact.getTakenSquares(currentPiece, game.pieces);
-			var move1 = new player2Moves.Move1(currentSquare.x, currentSquare.y, currentSquare.index);
-			var move2 = new player2Moves.Move2(currentSquare.x, currentSquare.y, currentSquare.index);
-			var jumpMove1 = new player2Moves.JumpMove1(currentSquare.x, currentSquare.y, currentSquare.index);
-			var jumpMove2 = new player2Moves.JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
+			var currentSquare = HelperFact.getCurrentSquare(game.board, piece),
+			    takenSquares = HelperFact.getTakenSquares(currentPiece, game.pieces),
+			    move1 = new player2Moves.Move1(currentSquare.x, currentSquare.y, currentSquare.index),
+			    move2 = new player2Moves.Move2(currentSquare.x, currentSquare.y, currentSquare.index),
+			    jumpMove1 = new player2Moves.JumpMove1(currentSquare.x, currentSquare.y, currentSquare.index),
+			    jumpMove2 = new player2Moves.JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
 
 			choice1 = HelperFact.getRegularMove({
 				board: game.board,

@@ -2,26 +2,42 @@
 app.controller('GameCtrl', function (
 	$timeout, BoardFact, $routeParams, $location, UsersFact, $cookies, $window, MoveFact, HelperFact) {
 	const game = this;
+	const gameId = $routeParams.gameid;
+	const userId = $cookies.get('userid');
+	const userEmail = $cookies.get('email');
 
-	// $window.onbeforeunload = function (e) {
-	// 	e = e || $window.event;
-	// 	console.log(e);
-	// 	e.preventDefault = true;
-	// 	e.cancelBubble = true;
-	// 	e.returnValue = 'reload';
-	// };
 	let player1Moves = MoveFact.player1Moves;
 	let player2Moves = MoveFact.player2Moves;
+	let currentPiece, choice1, choice2, choice3, choice4,
+		jumpChoice1, jumpChoice2, jumpChoice3, jumpChoice4;
 
-
-	const gameId = $routeParams.gameid;
-	var userId = $cookies.get('userid');
-	var userEmail = $cookies.get('email');
-	var currentPiece, choice1, choice2, choice3, choice4, jumpChoice1, jumpChoice2, jumpChoice3, jumpChoice4;
 	game.heading = "Checkers";
 	game.pieces = {};
 	game.messages = {};
 	game.board = BoardFact.squares();
+	game.chckBrd = (x, y) => {
+		//function to create checkerboard pattern
+		var oddX = x % 2;
+		var oddY = y % 2;
+		return (oddX ^ oddY);
+	};
+
+	if (game.player1Id === userId) {
+		game.playerEmail = game.player1Email;
+		game.playerColor = 'red';
+		game.player = '1';
+	} else if (game.player2Id === userId) {
+		game.playerEmail = game.player2Email;
+		game.playerColor = 'white';
+		game.player = '2';
+	}
+
+	game.toggleTurn = () => {
+		//determines who's turn it is
+		if (game.turn === userId) {
+			return true;
+		}
+	};
 
 	firebase.database().ref(`games/${gameId}/`).on('value', (snap) => {
 		game.turn = snap.val().turn;
@@ -48,25 +64,8 @@ app.controller('GameCtrl', function (
 		}
 	});
 
-	if (game.player1Id === userId) {
-		game.playerEmail = game.player1Email;
-		game.playerColor = 'red';
-		game.player = '1';
-	} else if (game.player2Id === userId) {
-		game.playerEmail = game.player2Email;
-		game.playerColor = 'white';
-		game.player = '2';
-	}
-
-	//function to create checkerboard pattern
-	game.chckBrd = (x, y) => {
-		var oddX = x % 2;
-		var oddY = y % 2;
-		return (oddX ^ oddY);
-	};
-
-	//function to reset player moves
 	function removeSelected() {
+		//function to reset player moves
 		currentPiece = null;
 		choice1 = null;
 		choice2 = null;
@@ -79,22 +78,14 @@ app.controller('GameCtrl', function (
 		$('.selected').removeClass('selected');
 	}
 
-	//determines who's turn it is
-	game.toggleTurn = () => {
-		if (game.turn === userId) {
-			return true;
-		}
-	};
-
-	//when a player chooses a king piece this function is called
 	game.chooseKing = (e, piece, id) => {
+		//when a player chooses a king piece this function is called
 		if (game.turn === piece.userid) {
-			var currentElement = e.currentTarget;
-			let currentSquare = HelperFact.getCurrentSquare(game.board, piece);
+			$(e.currentTarget).toggleClass('selected');
 			currentPiece = piece;
 			currentPiece.id = id;
-			$(currentElement).toggleClass('selected');
-			let takenSquares = HelperFact.getTakenSquares(currentPiece, game.pieces),
+			let currentSquare = HelperFact.getCurrentSquare(game.board, piece),
+				takenSquares = HelperFact.getTakenSquares(currentPiece, game.pieces),
 				move1 = new player1Moves.Move1(currentSquare.x, currentSquare.y, currentSquare.index),
 				move2 = new player1Moves.Move2(currentSquare.x, currentSquare.y, currentSquare.index),
 				move3 = new player2Moves.Move1(currentSquare.x, currentSquare.y, currentSquare.index),
@@ -155,24 +146,18 @@ app.controller('GameCtrl', function (
 		}
 	};
 
-	//when player 1 chooses a piece this function is called
 	game.choosePiecePlayer1 = (e, piece, id) => {
-
+		//when player 1 chooses a piece this function is called
 		if (game.turn === piece.userid) {
-			let currentElement = e.currentTarget;
-			let currentSquare = HelperFact.getCurrentSquare(game.board, piece);
+			$(e.currentTarget).toggleClass('selected');
 			currentPiece = piece;
 			currentPiece.id = id;
-			$(currentElement).toggleClass('selected');
-			let takenSquares = HelperFact.getTakenSquares(currentPiece, game.pieces);
-
-
-
-			//looks for non-jump moves to see if they are empty
-			let move1 = new player1Moves.Move1(currentSquare.x, currentSquare.y, currentSquare.index);
-			let move2 = new player1Moves.Move2(currentSquare.x, currentSquare.y, currentSquare.index);
-			let jumpMove1 = new player1Moves.JumpMove1(currentSquare.x, currentSquare.y, currentSquare.index);
-			let jumpMove2 = new player1Moves.JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
+			let currentSquare = HelperFact.getCurrentSquare(game.board, piece),
+				takenSquares = HelperFact.getTakenSquares(currentPiece, game.pieces),
+				move1 = new player1Moves.Move1(currentSquare.x, currentSquare.y, currentSquare.index),
+				move2 = new player1Moves.Move2(currentSquare.x, currentSquare.y, currentSquare.index),
+				jumpMove1 = new player1Moves.JumpMove1(currentSquare.x, currentSquare.y, currentSquare.index),
+				jumpMove2 = new player1Moves.JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
 
 			choice1 = HelperFact.getRegularMove({
 				board: game.board,
@@ -201,19 +186,18 @@ app.controller('GameCtrl', function (
 		}
 	};
 
-	//same function as choosePiecePlayer1 except math for moves and jump criteria are different
 	game.choosePiecePlayer2 = (e, piece, id) => {
+		//same function as choosePiecePlayer1 except math for moves and jump criteria are different
 		if (game.turn === piece.userid) {
-			let currentElement = e.currentTarget;
-			let currentSquare = HelperFact.getCurrentSquare(game.board, piece);
+			$(e.currentTarget).toggleClass('selected');
 			currentPiece = piece;
 			currentPiece.id = id;
-			$(currentElement).toggleClass('selected');
-			let takenSquares = HelperFact.getTakenSquares(currentPiece, game.pieces);
-			let move1 = new player2Moves.Move1(currentSquare.x, currentSquare.y, currentSquare.index);
-			let move2 = new player2Moves.Move2(currentSquare.x, currentSquare.y, currentSquare.index);
-			let jumpMove1 = new player2Moves.JumpMove1(currentSquare.x, currentSquare.y, currentSquare.index);
-			let jumpMove2 = new player2Moves.JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
+			let currentSquare = HelperFact.getCurrentSquare(game.board, piece),
+				takenSquares = HelperFact.getTakenSquares(currentPiece, game.pieces),
+				move1 = new player2Moves.Move1(currentSquare.x, currentSquare.y, currentSquare.index),
+				move2 = new player2Moves.Move2(currentSquare.x, currentSquare.y, currentSquare.index),
+				jumpMove1 = new player2Moves.JumpMove1(currentSquare.x, currentSquare.y, currentSquare.index),
+				jumpMove2 = new player2Moves.JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
 
 			choice1 = HelperFact.getRegularMove({
 				board: game.board,
