@@ -94,11 +94,16 @@ app.controller('GameCtrl', function (
 			currentPiece = piece;
 			currentPiece.id = id;
 			$(currentElement).toggleClass('selected');
-			let takenSquares = HelperFact.getTakenSquares(currentPiece, game.pieces);
-			let move1 = new player1Moves.Move1(currentSquare.x, currentSquare.y, currentSquare.index);
-			let move2 = new player1Moves.Move2(currentSquare.x, currentSquare.y, currentSquare.index);
-			let move3 = new player2Moves.Move1(currentSquare.x, currentSquare.y, currentSquare.index);
-			let move4 = new player2Moves.Move2(currentSquare.x, currentSquare.y, currentSquare.index);
+			let takenSquares = HelperFact.getTakenSquares(currentPiece, game.pieces),
+				move1 = new player1Moves.Move1(currentSquare.x, currentSquare.y, currentSquare.index),
+				move2 = new player1Moves.Move2(currentSquare.x, currentSquare.y, currentSquare.index),
+				move3 = new player2Moves.Move1(currentSquare.x, currentSquare.y, currentSquare.index),
+				move4 = new player2Moves.Move2(currentSquare.x, currentSquare.y, currentSquare.index),
+				jumpMove1 = new player1Moves.JumpMove1(currentSquare.x, currentSquare.y, currentSquare.index),
+				jumpMove2 = new player1Moves.JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index),
+				jumpMove3 = new player2Moves.JumpMove1(currentSquare.x, currentSquare.y, currentSquare.index),
+				jumpMove4 = new player2Moves.JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
+
 			choice1 = HelperFact.getRegularMove({
 				board: game.board,
 				move: move1,
@@ -119,73 +124,34 @@ app.controller('GameCtrl', function (
 				takenSquares: takenSquares,
 				move: move4
 			});
-
-
-			//checks for possible jump moves
-			for (let key in game.board) {
-				var jumpMove1 = new player1Moves.JumpMove1(currentSquare.x, currentSquare.y, currentSquare.index);
-				var jumpMove2 = new player1Moves.JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
-				var jumpMove3 = new player2Moves.JumpMove1(currentSquare.x, currentSquare.y, currentSquare.index);
-				var jumpMove4 = new player2Moves.JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
-				// checks to see if a jump move is possible
-				if (jumpMove1.index === game.board[key].index) {
-					for (let i = 0; i < takenSquares.length; i++) {
-						if (move1.x === takenSquares[i].y && move1.y === takenSquares[i].x) {
-							if (takenSquares[i].player === 'white' && piece.color === 'red') {
-								if (jumpMove1.x === takenSquares[i].y && jumpMove1.y === takenSquares[i].y) {} else {
-									jumpChoice1 = game.board[key];
-								}
-							} else if (takenSquares[i].player === 'red' && piece.color === 'white') {
-								if (jumpMove1.x === takenSquares[i].y && jumpMove1.y === takenSquares[i].y) {} else {
-									jumpChoice1 = game.board[key];
-								}
-							}
-						}
-					}
-				} else if (jumpMove2.index === game.board[key].index) {
-					for (let i = 0; i < takenSquares.length; i++) {
-						if (move2.x === takenSquares[i].y && move2.y === takenSquares[i].x) {
-							if (takenSquares[i].player === 'white' && piece.color === 'red') {
-								if (jumpMove2.x === takenSquares[i].y && jumpMove2.y === takenSquares[i].y) {} else {
-									jumpChoice2 = game.board[key];
-								}
-							} else if (takenSquares[i].player === 'red' && piece.color === 'white') {
-								if (jumpMove2.x === takenSquares[i].y && jumpMove2.y === takenSquares[i].y) {} else {
-									jumpChoice2 = game.board[key];
-								}
-							}
-						}
-					}
-				} else if (jumpMove3.index === game.board[key].index) {
-					for (let i = 0; i < takenSquares.length; i++) {
-						if (move3.x === takenSquares[i].y && move3.y === takenSquares[i].x) {
-							if (takenSquares[i].player === 'white' && piece.color === 'red') {
-								if (jumpMove3.x === takenSquares[i].y && jumpMove3.y === takenSquares[i].y) {} else {
-									jumpChoice3 = game.board[key];
-								}
-							} else if (takenSquares[i].player === 'red' && piece.color === 'white') {
-								if (jumpMove3.x === takenSquares[i].y && jumpMove3.y === takenSquares[i].y) {} else {
-									jumpChoice3 = game.board[key];
-								}
-							}
-						}
-					}
-				} else if (jumpMove4.index === game.board[key].index) {
-					for (let i = 0; i < takenSquares.length; i++) {
-						if (move4.x === takenSquares[i].y && move4.y === takenSquares[i].x) {
-							if (takenSquares[i].player === 'white' && piece.color === 'red') {
-								if (jumpMove4.x === takenSquares[i].y && jumpMove4.y === takenSquares[i].y) {} else {
-									jumpChoice4 = game.board[key];
-								}
-							} else if (takenSquares[i].player === 'red' && piece.color === 'white') {
-								if (jumpMove4.x === takenSquares[i].y && jumpMove4.y === takenSquares[i].y) {} else {
-									jumpChoice4 = game.board[key];
-								}
-							}
-						}
-					}
-				}
-			}
+			jumpChoice1 = HelperFact.getKingJumpMove({
+				board: game.board,
+				takenSquares: takenSquares,
+				move: move1,
+				jumpMove: jumpMove1,
+				player: game.playerColor
+			});
+			jumpChoice2 = HelperFact.getKingJumpMove({
+				board: game.board,
+				takenSquares: takenSquares,
+				move: move2,
+				jumpMove: jumpMove2,
+				player: game.playerColor
+			});
+			jumpChoice3 = HelperFact.getKingJumpMove({
+				board: game.board,
+				takenSquares: takenSquares,
+				move: move3,
+				jumpMove: jumpMove3,
+				player: game.playerColor
+			});
+			jumpChoice4 = HelperFact.getKingJumpMove({
+				board: game.board,
+				takenSquares: takenSquares,
+				move: move4,
+				jumpMove: jumpMove4,
+				player: game.playerColor
+			});
 		}
 	};
 

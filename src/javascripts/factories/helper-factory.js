@@ -55,12 +55,32 @@ app.factory('HelperFact', () => {
         }
       }
     }
-  }
+  };
+
+  let getKingJumpMove = ({
+    board, takenSquares, move, jumpMove, player
+  }) => {
+    for (let key in board) {
+      if (jumpMove.index === board[key].index) {
+        for (let i = 0; i < takenSquares.length; i++) {
+          if (move.x === takenSquares[i].y && move.y === takenSquares[i].x) {
+            if (takenSquares[i].player !== player) {
+              if (jumpMove.x === takenSquares[i].y && jumpMove.y === takenSquares[i].y) {} else {
+                let jumpChoice = board[key];
+                return jumpChoice;
+              }
+            }
+          }
+        }
+      }
+    }
+  };
 
   return {
     getTakenSquares,
     getCurrentSquare,
     getRegularMove,
-    getJumpMove
+    getJumpMove,
+    getKingJumpMove
   };
 });
