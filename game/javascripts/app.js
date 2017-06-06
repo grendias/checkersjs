@@ -11,6 +11,210 @@ app.config(function () {
 	};
 	firebase.initializeApp(config);
 });
+'use strict';
+
+app.factory('AuthFactory', function ($location, $timeout, $cookies) {
+  firebase.auth().onAuthStateChanged(function (user) {
+    if (user) {
+      firebase.database().ref('/users/' + user.uid).set({
+        email: user.email
+      });
+      $cookies.put('userid', user.uid);
+      $cookies.put('email', user.email);
+      $location.path('/dashboard/' + user.uid);
+      $timeout();
+    } else {
+      $location.path('/');
+      $timeout();
+    }
+  });
+  return {
+    login: function login(email, password) {
+      firebase.auth().signInWithEmailAndPassword(email, password);
+    },
+    logout: function logout() {
+      firebase.auth().signOut();
+    },
+    register: function register(email, password) {
+      firebase.auth().createUserWithEmailAndPassword(email, password);
+    }
+  };
+});
+app.factory('UsersFact', function () {
+  var currentUser = firebase.auth().currentUser;
+  return {
+    user: currentUser
+  };
+});
+'use strict';
+
+app.factory('BoardFact', function () {
+  var row = 8;
+  var _squares = [];
+  var index = 0;
+  for (var x = 0; x < row; x++) {
+    for (var y = 0; y < row; y++) {
+      _squares.push({
+        'index': index,
+        'x': x,
+        'y': y
+      });
+      index++;
+    }
+  }
+  return {
+    squares: function squares() {
+      return _squares;
+    }
+  };
+});
+"use strict";
+
+app.factory('HelperFact', function () {
+  var getTakenSquares = function getTakenSquares(currentPiece, allPieces) {
+    var takenSquares = [];
+    for (var id in allPieces) {
+      if (allPieces[id].x === currentPiece.x && allPieces[id].y === currentPiece.y) {} else {
+        takenSquares.push({
+          x: allPieces[id].x,
+          y: allPieces[id].y,
+          player: allPieces[id].color
+        });
+      }
+    }
+    return takenSquares;
+  };
+
+  var getCurrentSquare = function getCurrentSquare(board, currentPiece) {
+    var currentSquare = void 0;
+    for (var key in board) {
+      if (currentPiece.x === board[key].y && currentPiece.y === board[key].x) {
+        currentSquare = board[key];
+      }
+    }
+    return currentSquare;
+  };
+
+  var getRegularMoves = function getRegularMoves(_ref) {
+    var board = _ref.board,
+        move = _ref.move,
+        takenSquares = _ref.takenSquares;
+
+    for (var key in board) {
+      if (move.index === board[key].index) {
+        for (var i = 0; i < takenSquares.length; i++) {
+          if (move.x === takenSquares[i].y && move.y === takenSquares[i].x) {} else {
+            return board[key];
+          }
+        }
+      }
+    }
+  };
+
+  return {
+    getTakenSquares: getTakenSquares,
+    getCurrentSquare: getCurrentSquare,
+    getRegularMoves: getRegularMoves
+  };
+});
+'use strict';
+
+app.factory('MoveFact', function () {
+  var kingMoves = {
+    Move1: function Move1(x, y, index) {
+      this.index = index + 9;
+      this.x = x + 1;
+      this.y = y + 1;
+    },
+    Move2: function Move2(x, y, index) {
+      this.index = index + 7;
+      this.x = x + 1;
+      this.y = y - 1;
+    },
+    JumpMove2: function JumpMove2(x, y, index) {
+      this.index = index + 14;
+      this.x = x + 2;
+      this.y = y - 2;
+    },
+    JumpMove1: function JumpMove1(x, y, index) {
+      this.index = index + 18;
+      this.x = x + 2;
+      this.y = y + 2;
+    },
+    Move3: function Move3(x, y, index) {
+      this.index = index - 9;
+      this.x = x - 1;
+      this.y = y - 1;
+    },
+    Move4: function Move4(x, y, index) {
+      this.index = index - 7;
+      this.x = x - 1;
+      this.y = y + 1;
+    },
+    JumpMove3: function JumpMove3(x, y, index) {
+      this.index = index - 18;
+      this.x = x - 2;
+      this.y = y - 2;
+    },
+    JumpMove4: function JumpMove4(x, y, index) {
+      this.index = index - 14;
+      this.x = x - 2;
+      this.y = y + 2;
+    }
+  };
+
+  var player1Moves = {
+    Move1: function Move1(x, y, index) {
+      this.index = index + 9;
+      this.x = x + 1;
+      this.y = y + 1;
+    },
+    Move2: function Move2(x, y, index) {
+      this.index = index + 7;
+      this.x = x + 1;
+      this.y = y - 1;
+    },
+    JumpMove2: function JumpMove2(x, y, index) {
+      this.index = index + 14;
+      this.x = x + 2;
+      this.y = y - 2;
+    },
+    JumpMove1: function JumpMove1(x, y, index) {
+      this.index = index + 18;
+      this.x = x + 2;
+      this.y = y + 2;
+    }
+  };
+
+  var player2Moves = {
+    Move1: function Move1(x, y, index) {
+      this.index = index - 9;
+      this.x = x - 1;
+      this.y = y - 1;
+    },
+    Move2: function Move2(x, y, index) {
+      this.index = index - 7;
+      this.x = x - 1;
+      this.y = y + 1;
+    },
+    JumpMove1: function JumpMove1(x, y, index) {
+      this.index = index - 18;
+      this.x = x - 2;
+      this.y = y - 2;
+    },
+    JumpMove2: function JumpMove2(x, y, index) {
+      this.index = index - 14;
+      this.x = x - 2;
+      this.y = y + 2;
+    }
+  };
+
+  return {
+    kingMoves: kingMoves,
+    player1Moves: player1Moves,
+    player2Moves: player2Moves
+  };
+});
 "use strict";
 
 app.controller('DashboardCtrl', function ($timeout, AuthFactory, $location, $routeParams) {
@@ -193,103 +397,90 @@ app.controller('GameCtrl', function ($timeout, BoardFact, $routeParams, $locatio
 			currentPiece.id = id;
 			$(currentElement).toggleClass('selected');
 			var takenSquares = HelperFact.getTakenSquares(currentPiece, game.pieces);
-			var move1;
-			var move2;
-			var move3;
-			var move4;
+			var move1 = new kingMoves.Move1(currentSquare.x, currentSquare.y, currentSquare.index);
+			var move2 = new kingMoves.Move2(currentSquare.x, currentSquare.y, currentSquare.index);
+			var move3 = new kingMoves.Move3(currentSquare.x, currentSquare.y, currentSquare.index);
+			var move4 = new kingMoves.Move4(currentSquare.x, currentSquare.y, currentSquare.index);
+			choice1 = HelperFact.getRegularMoves({
+				board: game.board,
+				move: move1,
+				takenSquares: takenSquares
+			});
+			choice2 = HelperFact.getRegularMoves({
+				board: game.board,
+				takenSquares: takenSquares,
+				move: move2
+			});
+			choice3 = HelperFact.getRegularMoves({
+				board: game.board,
+				move: move3,
+				takenSquares: takenSquares
+			});
+			choice4 = HelperFact.getRegularMoves({
+				board: game.board,
+				takenSquares: takenSquares,
+				move: move4
+			});
 
-			//looks for possible non-jump moves
-			for (var key in game.board) {
-				move1 = new kingMoves.Move1(currentSquare.x, currentSquare.y, currentSquare.index);
-				move2 = new kingMoves.Move2(currentSquare.x, currentSquare.y, currentSquare.index);
-				move3 = new kingMoves.Move3(currentSquare.x, currentSquare.y, currentSquare.index);
-				move4 = new kingMoves.Move4(currentSquare.x, currentSquare.y, currentSquare.index);
-				//checks to see if possible move is empty
-				if (move1.index === game.board[key].index) {
-					for (var i = 0; i < takenSquares.length; i++) {
-						if (move1.x === takenSquares[i].y && move1.y === takenSquares[i].x) {} else {
-							choice1 = game.board[key];
-						}
-					}
-				} else if (move2.index === game.board[key].index) {
-					for (var _i = 0; _i < takenSquares.length; _i++) {
-						if (move2.x === takenSquares[_i].y && move2.y === takenSquares[_i].x) {} else {
-							choice2 = game.board[key];
-						}
-					}
-				} else if (move3.index === game.board[key].index) {
-					for (var _i2 = 0; _i2 < takenSquares.length; _i2++) {
-						if (move3.x === takenSquares[_i2].y && move3.y === takenSquares[_i2].x) {} else {
-							choice3 = game.board[key];
-						}
-					}
-				} else if (move4.index === game.board[key].index) {
-					for (var _i3 = 0; _i3 < takenSquares.length; _i3++) {
-						if (move4.x === takenSquares[_i3].y && move4.y === takenSquares[_i3].x) {} else {
-							choice4 = game.board[key];
-						}
-					}
-				}
-			}
 			//checks for possible jump moves
-			for (var _key in game.board) {
+			for (var key in game.board) {
 				var jumpMove1 = new kingMoves.JumpMove1(currentSquare.x, currentSquare.y, currentSquare.index);
 				var jumpMove2 = new kingMoves.JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
 				var jumpMove3 = new kingMoves.JumpMove3(currentSquare.x, currentSquare.y, currentSquare.index);
 				var jumpMove4 = new kingMoves.JumpMove4(currentSquare.x, currentSquare.y, currentSquare.index);
 				// checks to see if a jump move is possible
-				if (jumpMove1.index === game.board[_key].index) {
-					for (var _i4 = 0; _i4 < takenSquares.length; _i4++) {
-						if (move1.x === takenSquares[_i4].y && move1.y === takenSquares[_i4].x) {
-							if (takenSquares[_i4].player === 'white' && piece.color === 'red') {
-								if (jumpMove1.x === takenSquares[_i4].y && jumpMove1.y === takenSquares[_i4].y) {} else {
-									jumpChoice1 = game.board[_key];
+				if (jumpMove1.index === game.board[key].index) {
+					for (var i = 0; i < takenSquares.length; i++) {
+						if (move1.x === takenSquares[i].y && move1.y === takenSquares[i].x) {
+							if (takenSquares[i].player === 'white' && piece.color === 'red') {
+								if (jumpMove1.x === takenSquares[i].y && jumpMove1.y === takenSquares[i].y) {} else {
+									jumpChoice1 = game.board[key];
 								}
-							} else if (takenSquares[_i4].player === 'red' && piece.color === 'white') {
-								if (jumpMove1.x === takenSquares[_i4].y && jumpMove1.y === takenSquares[_i4].y) {} else {
-									jumpChoice1 = game.board[_key];
-								}
-							}
-						}
-					}
-				} else if (jumpMove2.index === game.board[_key].index) {
-					for (var _i5 = 0; _i5 < takenSquares.length; _i5++) {
-						if (move2.x === takenSquares[_i5].y && move2.y === takenSquares[_i5].x) {
-							if (takenSquares[_i5].player === 'white' && piece.color === 'red') {
-								if (jumpMove2.x === takenSquares[_i5].y && jumpMove2.y === takenSquares[_i5].y) {} else {
-									jumpChoice2 = game.board[_key];
-								}
-							} else if (takenSquares[_i5].player === 'red' && piece.color === 'white') {
-								if (jumpMove2.x === takenSquares[_i5].y && jumpMove2.y === takenSquares[_i5].y) {} else {
-									jumpChoice2 = game.board[_key];
+							} else if (takenSquares[i].player === 'red' && piece.color === 'white') {
+								if (jumpMove1.x === takenSquares[i].y && jumpMove1.y === takenSquares[i].y) {} else {
+									jumpChoice1 = game.board[key];
 								}
 							}
 						}
 					}
-				} else if (jumpMove3.index === game.board[_key].index) {
-					for (var _i6 = 0; _i6 < takenSquares.length; _i6++) {
-						if (move3.x === takenSquares[_i6].y && move3.y === takenSquares[_i6].x) {
-							if (takenSquares[_i6].player === 'white' && piece.color === 'red') {
-								if (jumpMove3.x === takenSquares[_i6].y && jumpMove3.y === takenSquares[_i6].y) {} else {
-									jumpChoice3 = game.board[_key];
+				} else if (jumpMove2.index === game.board[key].index) {
+					for (var _i = 0; _i < takenSquares.length; _i++) {
+						if (move2.x === takenSquares[_i].y && move2.y === takenSquares[_i].x) {
+							if (takenSquares[_i].player === 'white' && piece.color === 'red') {
+								if (jumpMove2.x === takenSquares[_i].y && jumpMove2.y === takenSquares[_i].y) {} else {
+									jumpChoice2 = game.board[key];
 								}
-							} else if (takenSquares[_i6].player === 'red' && piece.color === 'white') {
-								if (jumpMove3.x === takenSquares[_i6].y && jumpMove3.y === takenSquares[_i6].y) {} else {
-									jumpChoice3 = game.board[_key];
+							} else if (takenSquares[_i].player === 'red' && piece.color === 'white') {
+								if (jumpMove2.x === takenSquares[_i].y && jumpMove2.y === takenSquares[_i].y) {} else {
+									jumpChoice2 = game.board[key];
 								}
 							}
 						}
 					}
-				} else if (jumpMove4.index === game.board[_key].index) {
-					for (var _i7 = 0; _i7 < takenSquares.length; _i7++) {
-						if (move4.x === takenSquares[_i7].y && move4.y === takenSquares[_i7].x) {
-							if (takenSquares[_i7].player === 'white' && piece.color === 'red') {
-								if (jumpMove4.x === takenSquares[_i7].y && jumpMove4.y === takenSquares[_i7].y) {} else {
-									jumpChoice4 = game.board[_key];
+				} else if (jumpMove3.index === game.board[key].index) {
+					for (var _i2 = 0; _i2 < takenSquares.length; _i2++) {
+						if (move3.x === takenSquares[_i2].y && move3.y === takenSquares[_i2].x) {
+							if (takenSquares[_i2].player === 'white' && piece.color === 'red') {
+								if (jumpMove3.x === takenSquares[_i2].y && jumpMove3.y === takenSquares[_i2].y) {} else {
+									jumpChoice3 = game.board[key];
 								}
-							} else if (takenSquares[_i7].player === 'red' && piece.color === 'white') {
-								if (jumpMove4.x === takenSquares[_i7].y && jumpMove4.y === takenSquares[_i7].y) {} else {
-									jumpChoice4 = game.board[_key];
+							} else if (takenSquares[_i2].player === 'red' && piece.color === 'white') {
+								if (jumpMove3.x === takenSquares[_i2].y && jumpMove3.y === takenSquares[_i2].y) {} else {
+									jumpChoice3 = game.board[key];
+								}
+							}
+						}
+					}
+				} else if (jumpMove4.index === game.board[key].index) {
+					for (var _i3 = 0; _i3 < takenSquares.length; _i3++) {
+						if (move4.x === takenSquares[_i3].y && move4.y === takenSquares[_i3].x) {
+							if (takenSquares[_i3].player === 'white' && piece.color === 'red') {
+								if (jumpMove4.x === takenSquares[_i3].y && jumpMove4.y === takenSquares[_i3].y) {} else {
+									jumpChoice4 = game.board[key];
+								}
+							} else if (takenSquares[_i3].player === 'red' && piece.color === 'white') {
+								if (jumpMove4.x === takenSquares[_i3].y && jumpMove4.y === takenSquares[_i3].y) {} else {
+									jumpChoice4 = game.board[key];
 								}
 							}
 						}
@@ -310,48 +501,42 @@ app.controller('GameCtrl', function ($timeout, BoardFact, $routeParams, $locatio
 			currentPiece.id = id;
 			$(currentElement).toggleClass('selected');
 			var takenSquares = HelperFact.getTakenSquares(currentPiece, game.pieces);
-			var move1 = void 0,
-			    move2 = void 0;
 
 			//looks for non-jump moves to see if they are empty
-			for (var key in game.board) {
-				move1 = new player1Moves.Move1(currentSquare.x, currentSquare.y, currentSquare.index);
-				move2 = new player1Moves.Move2(currentSquare.x, currentSquare.y, currentSquare.index);
-				if (move1.index === game.board[key].index) {
-					for (var i = 0; i < takenSquares.length; i++) {
-						if (move1.x === takenSquares[i].y && move1.y === takenSquares[i].x) {} else {
-							choice1 = game.board[key];
-						}
-					}
-				} else if (move2.index === game.board[key].index) {
-					for (var _i8 = 0; _i8 < takenSquares.length; _i8++) {
-						if (move2.x === takenSquares[_i8].y && move2.y === takenSquares[_i8].x) {} else {
-							choice2 = game.board[key];
-						}
-					}
-				}
-			}
+			var move1 = new player1Moves.Move1(currentSquare.x, currentSquare.y, currentSquare.index);
+			var move2 = new player1Moves.Move2(currentSquare.x, currentSquare.y, currentSquare.index);
+			choice1 = HelperFact.getRegularMoves({
+				board: game.board,
+				move: move1,
+				takenSquares: takenSquares
+			});
+			choice2 = HelperFact.getRegularMoves({
+				board: game.board,
+				takenSquares: takenSquares,
+				move: move2
+			});
+
 			//checks for jump moves over white pieces and checks if they are empty
-			for (var _key2 in game.board) {
+			for (var key in game.board) {
 				var jumpMove1 = new player1Moves.JumpMove1(currentSquare.x, currentSquare.y, currentSquare.index);
 				var jumpMove2 = new player1Moves.JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
-				if (jumpMove1.index === game.board[_key2].index) {
-					for (var _i9 = 0; _i9 < takenSquares.length; _i9++) {
-						if (move1.x === takenSquares[_i9].y && move1.y === takenSquares[_i9].x) {
-							if (takenSquares[_i9].player === 'white') {
-								if (jumpMove1.x === takenSquares[_i9].y && jumpMove1.y === takenSquares[_i9].y) {} else {
-									jumpChoice1 = game.board[_key2];
+				if (jumpMove1.index === game.board[key].index) {
+					for (var i = 0; i < takenSquares.length; i++) {
+						if (move1.x === takenSquares[i].y && move1.y === takenSquares[i].x) {
+							if (takenSquares[i].player === 'white') {
+								if (jumpMove1.x === takenSquares[i].y && jumpMove1.y === takenSquares[i].y) {} else {
+									jumpChoice1 = game.board[key];
 								}
 							}
 						}
 					}
-				} else if (jumpMove2.index === game.board[_key2].index) {
-					for (var _i10 = 0; _i10 < takenSquares.length; _i10++) {
-						if (move2.x === takenSquares[_i10].y && move2.y === takenSquares[_i10].x) {
-							if (takenSquares[_i10].player === 'white') {
+				} else if (jumpMove2.index === game.board[key].index) {
+					for (var _i4 = 0; _i4 < takenSquares.length; _i4++) {
+						if (move2.x === takenSquares[_i4].y && move2.y === takenSquares[_i4].x) {
+							if (takenSquares[_i4].player === 'white') {
 								// console.log(jumpMove2);
-								if (jumpMove2.x === takenSquares[_i10].y && jumpMove2.y === takenSquares[_i10].y) {} else {
-									jumpChoice2 = game.board[_key2];
+								if (jumpMove2.x === takenSquares[_i4].y && jumpMove2.y === takenSquares[_i4].y) {} else {
+									jumpChoice2 = game.board[key];
 								}
 							}
 						}
@@ -371,45 +556,38 @@ app.controller('GameCtrl', function ($timeout, BoardFact, $routeParams, $locatio
 			currentPiece.id = id;
 			$(currentElement).toggleClass('selected');
 			var takenSquares = HelperFact.getTakenSquares(currentPiece, game.pieces);
-			var move1 = void 0;
-			var move2 = void 0;
+			var move1 = new player2Moves.Move1(currentSquare.x, currentSquare.y, currentSquare.index);
+			var move2 = new player2Moves.Move2(currentSquare.x, currentSquare.y, currentSquare.index);
+			choice1 = HelperFact.getRegularMoves({
+				board: game.board,
+				move: move1,
+				takenSquares: takenSquares
+			});
+			choice2 = HelperFact.getRegularMoves({
+				board: game.board,
+				takenSquares: takenSquares,
+				move: move2
+			});
 
 			for (var key in game.board) {
-				move1 = new player2Moves.Move1(currentSquare.x, currentSquare.y, currentSquare.index);
-				move2 = new player2Moves.Move2(currentSquare.x, currentSquare.y, currentSquare.index);
-				if (move1.index === game.board[key].index) {
-					for (var i = 0; i < takenSquares.length; i++) {
-						if (move1.x === takenSquares[i].y && move1.y === takenSquares[i].x) {} else {
-							choice1 = game.board[key];
-						}
-					}
-				} else if (move2.index === game.board[key].index) {
-					for (var _i11 = 0; _i11 < takenSquares.length; _i11++) {
-						if (move2.x === takenSquares[_i11].y && move2.y === takenSquares[_i11].x) {} else {
-							choice2 = game.board[key];
-						}
-					}
-				}
-			}
-			for (var _key3 in game.board) {
 				var jumpMove1 = new player2Moves.JumpMove1(currentSquare.x, currentSquare.y, currentSquare.index);
 				var jumpMove2 = new player2Moves.JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
-				if (jumpMove1.index === game.board[_key3].index) {
-					for (var _i12 = 0; _i12 < takenSquares.length; _i12++) {
-						if (move1.x === takenSquares[_i12].y && move1.y === takenSquares[_i12].x) {
-							if (takenSquares[_i12].player === 'red') {
-								if (jumpMove1.x === takenSquares[_i12].y && jumpMove1.y === takenSquares[_i12].y) {} else {
-									jumpChoice3 = game.board[_key3];
+				if (jumpMove1.index === game.board[key].index) {
+					for (var i = 0; i < takenSquares.length; i++) {
+						if (move1.x === takenSquares[i].y && move1.y === takenSquares[i].x) {
+							if (takenSquares[i].player === 'red') {
+								if (jumpMove1.x === takenSquares[i].y && jumpMove1.y === takenSquares[i].y) {} else {
+									jumpChoice3 = game.board[key];
 								}
 							}
 						}
 					}
-				} else if (jumpMove2.index === game.board[_key3].index) {
-					for (var _i13 = 0; _i13 < takenSquares.length; _i13++) {
-						if (move2.x === takenSquares[_i13].y && move2.y === takenSquares[_i13].x) {
-							if (takenSquares[_i13].player === 'red') {
-								if (jumpMove2.x === takenSquares[_i13].y && jumpMove2.y === takenSquares[_i13].y) {} else {
-									jumpChoice4 = game.board[_key3];
+				} else if (jumpMove2.index === game.board[key].index) {
+					for (var _i5 = 0; _i5 < takenSquares.length; _i5++) {
+						if (move2.x === takenSquares[_i5].y && move2.y === takenSquares[_i5].x) {
+							if (takenSquares[_i5].player === 'red') {
+								if (jumpMove2.x === takenSquares[_i5].y && jumpMove2.y === takenSquares[_i5].y) {} else {
+									jumpChoice4 = game.board[key];
 								}
 							}
 						}
@@ -473,9 +651,9 @@ app.controller('GameCtrl', function ($timeout, BoardFact, $routeParams, $locatio
 			} else if (square === jumpChoice2) {
 				var _jumpSquareX = jumpChoice2.x - 1;
 				var _jumpSquareY = jumpChoice2.y + 1;
-				for (var _key4 in game.pieces) {
-					if (game.pieces[_key4].y === _jumpSquareX && game.pieces[_key4].x === _jumpSquareY) {
-						firebase.database().ref('/' + gameId + '/' + _key4).remove();
+				for (var _key in game.pieces) {
+					if (game.pieces[_key].y === _jumpSquareX && game.pieces[_key].x === _jumpSquareY) {
+						firebase.database().ref('/' + gameId + '/' + _key).remove();
 						$timeout();
 						if (currentPiece.color === 'red') {
 							firebase.database().ref('games/' + gameId + '/').update({
@@ -491,9 +669,9 @@ app.controller('GameCtrl', function ($timeout, BoardFact, $routeParams, $locatio
 			} else if (square === jumpChoice3) {
 				var _jumpSquareX2 = jumpChoice3.x + 1;
 				var _jumpSquareY2 = jumpChoice3.y + 1;
-				for (var _key5 in game.pieces) {
-					if (game.pieces[_key5].y === _jumpSquareX2 && game.pieces[_key5].x === _jumpSquareY2) {
-						firebase.database().ref('/' + gameId + '/' + _key5).remove();
+				for (var _key2 in game.pieces) {
+					if (game.pieces[_key2].y === _jumpSquareX2 && game.pieces[_key2].x === _jumpSquareY2) {
+						firebase.database().ref('/' + gameId + '/' + _key2).remove();
 						$timeout();
 						if (currentPiece.color === 'red') {
 							firebase.database().ref('games/' + gameId + '/').update({
@@ -509,9 +687,9 @@ app.controller('GameCtrl', function ($timeout, BoardFact, $routeParams, $locatio
 			} else if (square === jumpChoice4) {
 				var _jumpSquareX3 = jumpChoice4.x + 1;
 				var _jumpSquareY3 = jumpChoice4.y - 1;
-				for (var _key6 in game.pieces) {
-					if (game.pieces[_key6].y === _jumpSquareX3 && game.pieces[_key6].x === _jumpSquareY3) {
-						firebase.database().ref('/' + gameId + '/' + _key6).remove();
+				for (var _key3 in game.pieces) {
+					if (game.pieces[_key3].y === _jumpSquareX3 && game.pieces[_key3].x === _jumpSquareY3) {
+						firebase.database().ref('/' + gameId + '/' + _key3).remove();
 						$timeout();
 						if (currentPiece.color === 'red') {
 							firebase.database().ref('games/' + gameId + '/').update({
@@ -635,219 +813,6 @@ app.controller('LoginCtrl', function ($timeout, AuthFactory, $location, $cookies
 			$timeout();
 		}
 	});
-});
-'use strict';
-
-app.factory('AuthFactory', function ($location, $timeout, $cookies) {
-  firebase.auth().onAuthStateChanged(function (user) {
-    if (user) {
-      firebase.database().ref('/users/' + user.uid).set({
-        email: user.email
-      });
-      $cookies.put('userid', user.uid);
-      $cookies.put('email', user.email);
-      $location.path('/dashboard/' + user.uid);
-      $timeout();
-    } else {
-      $location.path('/');
-      $timeout();
-    }
-  });
-  return {
-    login: function login(email, password) {
-      firebase.auth().signInWithEmailAndPassword(email, password);
-    },
-    logout: function logout() {
-      firebase.auth().signOut();
-    },
-    register: function register(email, password) {
-      firebase.auth().createUserWithEmailAndPassword(email, password);
-    }
-  };
-});
-app.factory('UsersFact', function () {
-  var currentUser = firebase.auth().currentUser;
-  return {
-    user: currentUser
-  };
-});
-'use strict';
-
-app.factory('BoardFact', function () {
-  var row = 8;
-  var _squares = [];
-  var index = 0;
-  for (var x = 0; x < row; x++) {
-    for (var y = 0; y < row; y++) {
-      _squares.push({
-        'index': index,
-        'x': x,
-        'y': y
-      });
-      index++;
-    }
-  }
-  return {
-    squares: function squares() {
-      return _squares;
-    }
-  };
-});
-"use strict";
-
-app.factory('HelperFact', function () {
-  var getTakenSquares = function getTakenSquares(currentPiece, allPieces) {
-    var takenSquares = [];
-    for (var id in allPieces) {
-      if (allPieces[id].x === currentPiece.x && allPieces[id].y === currentPiece.y) {} else {
-        takenSquares.push({
-          x: allPieces[id].x,
-          y: allPieces[id].y,
-          player: allPieces[id].color
-        });
-      }
-    }
-    return takenSquares;
-  };
-
-  var getCurrentSquare = function getCurrentSquare(board, currentPiece) {
-    console.log("board, currentPiece", board, currentPiece);
-    var currentSquare = void 0;
-    for (var key in board) {
-      if (currentPiece.x === board[key].y && currentPiece.y === board[key].x) {
-        currentSquare = board[key];
-        console.log("board[key", board[key]);
-      }
-    }
-    return currentSquare;
-  };
-  //
-  // let getRegularMoves = ({
-  //   board, move1, move2, takenSquares
-  // }) => {
-  //   console.log("board, move1, move2, takenSquares", board, move1, move2, takenSquares);
-  //   let choices = [];
-  //   for (let key in board) {
-  //     if (move1.index === board[key].index) {
-  //       for (let i = 0; i < takenSquares.length; i++) {
-  //         if (move1.x === takenSquares[i].y && move1.y === takenSquares[i].x) {} else {
-  //           choices.push(board[key]);
-  //         }
-  //       }
-  //     } else if (move2.index === board[key].index) {
-  //       for (let i = 0; i < takenSquares.length; i++) {
-  //         if (move2.x === takenSquares[i].y && move2.y === takenSquares[i].x) {} else {
-  //           choices.push(board[key]);
-  //         }
-  //       }
-  //     }
-  //   }
-  //   return choices;
-  // };
-
-  return {
-    getTakenSquares: getTakenSquares,
-    getCurrentSquare: getCurrentSquare
-    // getRegularMoves
-  };
-});
-'use strict';
-
-app.factory('MoveFact', function () {
-  var kingMoves = {
-    Move1: function Move1(x, y, index) {
-      this.index = index + 9;
-      this.x = x + 1;
-      this.y = y + 1;
-    },
-    Move2: function Move2(x, y, index) {
-      this.index = index + 7;
-      this.x = x + 1;
-      this.y = y - 1;
-    },
-    JumpMove2: function JumpMove2(x, y, index) {
-      this.index = index + 14;
-      this.x = x + 2;
-      this.y = y - 2;
-    },
-    JumpMove1: function JumpMove1(x, y, index) {
-      this.index = index + 18;
-      this.x = x + 2;
-      this.y = y + 2;
-    },
-    Move3: function Move3(x, y, index) {
-      this.index = index - 9;
-      this.x = x - 1;
-      this.y = y - 1;
-    },
-    Move4: function Move4(x, y, index) {
-      this.index = index - 7;
-      this.x = x - 1;
-      this.y = y + 1;
-    },
-    JumpMove3: function JumpMove3(x, y, index) {
-      this.index = index - 18;
-      this.x = x - 2;
-      this.y = y - 2;
-    },
-    JumpMove4: function JumpMove4(x, y, index) {
-      this.index = index - 14;
-      this.x = x - 2;
-      this.y = y + 2;
-    }
-  };
-
-  var player1Moves = {
-    Move1: function Move1(x, y, index) {
-      this.index = index + 9;
-      this.x = x + 1;
-      this.y = y + 1;
-    },
-    Move2: function Move2(x, y, index) {
-      this.index = index + 7;
-      this.x = x + 1;
-      this.y = y - 1;
-    },
-    JumpMove2: function JumpMove2(x, y, index) {
-      this.index = index + 14;
-      this.x = x + 2;
-      this.y = y - 2;
-    },
-    JumpMove1: function JumpMove1(x, y, index) {
-      this.index = index + 18;
-      this.x = x + 2;
-      this.y = y + 2;
-    }
-  };
-
-  var player2Moves = {
-    Move1: function Move1(x, y, index) {
-      this.index = index - 9;
-      this.x = x - 1;
-      this.y = y - 1;
-    },
-    Move2: function Move2(x, y, index) {
-      this.index = index - 7;
-      this.x = x - 1;
-      this.y = y + 1;
-    },
-    JumpMove1: function JumpMove1(x, y, index) {
-      this.index = index - 18;
-      this.x = x - 2;
-      this.y = y - 2;
-    },
-    JumpMove2: function JumpMove2(x, y, index) {
-      this.index = index - 14;
-      this.x = x - 2;
-      this.y = y + 2;
-    }
-  };
-
-  return {
-    kingMoves: kingMoves,
-    player1Moves: player1Moves,
-    player2Moves: player2Moves
-  };
 });
 "use strict";
 

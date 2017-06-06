@@ -93,44 +93,32 @@ app.controller('GameCtrl', function (
 			currentPiece.id = id;
 			$(currentElement).toggleClass('selected');
 			let takenSquares = HelperFact.getTakenSquares(currentPiece, game.pieces);
-			var move1;
-			var move2;
-			var move3;
-			var move4;
+			let move1 = new kingMoves.Move1(currentSquare.x, currentSquare.y, currentSquare.index);
+			let move2 = new kingMoves.Move2(currentSquare.x, currentSquare.y, currentSquare.index);
+			let move3 = new kingMoves.Move3(currentSquare.x, currentSquare.y, currentSquare.index);
+			let move4 = new kingMoves.Move4(currentSquare.x, currentSquare.y, currentSquare.index);
+			choice1 = HelperFact.getRegularMoves({
+				board: game.board,
+				move: move1,
+				takenSquares: takenSquares,
+			});
+			choice2 = HelperFact.getRegularMoves({
+				board: game.board,
+				takenSquares: takenSquares,
+				move: move2
+			});
+			choice3 = HelperFact.getRegularMoves({
+				board: game.board,
+				move: move3,
+				takenSquares: takenSquares,
+			});
+			choice4 = HelperFact.getRegularMoves({
+				board: game.board,
+				takenSquares: takenSquares,
+				move: move4
+			});
 
-			//looks for possible non-jump moves
-			for (let key in game.board) {
-				move1 = new kingMoves.Move1(currentSquare.x, currentSquare.y, currentSquare.index);
-				move2 = new kingMoves.Move2(currentSquare.x, currentSquare.y, currentSquare.index);
-				move3 = new kingMoves.Move3(currentSquare.x, currentSquare.y, currentSquare.index);
-				move4 = new kingMoves.Move4(currentSquare.x, currentSquare.y, currentSquare.index);
-				//checks to see if possible move is empty
-				if (move1.index === game.board[key].index) {
-					for (let i = 0; i < takenSquares.length; i++) {
-						if (move1.x === takenSquares[i].y && move1.y === takenSquares[i].x) {} else {
-							choice1 = game.board[key];
-						}
-					}
-				} else if (move2.index === game.board[key].index) {
-					for (let i = 0; i < takenSquares.length; i++) {
-						if (move2.x === takenSquares[i].y && move2.y === takenSquares[i].x) {} else {
-							choice2 = game.board[key];
-						}
-					}
-				} else if (move3.index === game.board[key].index) {
-					for (let i = 0; i < takenSquares.length; i++) {
-						if (move3.x === takenSquares[i].y && move3.y === takenSquares[i].x) {} else {
-							choice3 = game.board[key];
-						}
-					}
-				} else if (move4.index === game.board[key].index) {
-					for (let i = 0; i < takenSquares.length; i++) {
-						if (move4.x === takenSquares[i].y && move4.y === takenSquares[i].x) {} else {
-							choice4 = game.board[key];
-						}
-					}
-				}
-			}
+
 			//checks for possible jump moves
 			for (let key in game.board) {
 				var jumpMove1 = new kingMoves.JumpMove1(currentSquare.x, currentSquare.y, currentSquare.index);
@@ -210,28 +198,23 @@ app.controller('GameCtrl', function (
 			currentPiece.id = id;
 			$(currentElement).toggleClass('selected');
 			let takenSquares = HelperFact.getTakenSquares(currentPiece, game.pieces);
-			let move1, move2;
 
 
 
 			//looks for non-jump moves to see if they are empty
-			for (let key in game.board) {
-				move1 = new player1Moves.Move1(currentSquare.x, currentSquare.y, currentSquare.index);
-				move2 = new player1Moves.Move2(currentSquare.x, currentSquare.y, currentSquare.index);
-				if (move1.index === game.board[key].index) {
-					for (let i = 0; i < takenSquares.length; i++) {
-						if (move1.x === takenSquares[i].y && move1.y === takenSquares[i].x) {} else {
-							choice1 = game.board[key];
-						}
-					}
-				} else if (move2.index === game.board[key].index) {
-					for (let i = 0; i < takenSquares.length; i++) {
-						if (move2.x === takenSquares[i].y && move2.y === takenSquares[i].x) {} else {
-							choice2 = game.board[key];
-						}
-					}
-				}
-			}
+			let move1 = new player1Moves.Move1(currentSquare.x, currentSquare.y, currentSquare.index);
+			let move2 = new player1Moves.Move2(currentSquare.x, currentSquare.y, currentSquare.index);
+			choice1 = HelperFact.getRegularMoves({
+				board: game.board,
+				move: move1,
+				takenSquares: takenSquares,
+			});
+			choice2 = HelperFact.getRegularMoves({
+				board: game.board,
+				takenSquares: takenSquares,
+				move: move2
+			});
+
 			//checks for jump moves over white pieces and checks if they are empty
 			for (let key in game.board) {
 				let jumpMove1 = new player1Moves.JumpMove1(currentSquare.x, currentSquare.y, currentSquare.index);
@@ -272,26 +255,19 @@ app.controller('GameCtrl', function (
 			currentPiece.id = id;
 			$(currentElement).toggleClass('selected');
 			let takenSquares = HelperFact.getTakenSquares(currentPiece, game.pieces);
-			let move1;
-			let move2;
+			let move1 = new player2Moves.Move1(currentSquare.x, currentSquare.y, currentSquare.index);
+			let move2 = new player2Moves.Move2(currentSquare.x, currentSquare.y, currentSquare.index);
+			choice1 = HelperFact.getRegularMoves({
+				board: game.board,
+				move: move1,
+				takenSquares: takenSquares,
+			});
+			choice2 = HelperFact.getRegularMoves({
+				board: game.board,
+				takenSquares: takenSquares,
+				move: move2
+			});
 
-			for (let key in game.board) {
-				move1 = new player2Moves.Move1(currentSquare.x, currentSquare.y, currentSquare.index);
-				move2 = new player2Moves.Move2(currentSquare.x, currentSquare.y, currentSquare.index);
-				if (move1.index === game.board[key].index) {
-					for (let i = 0; i < takenSquares.length; i++) {
-						if (move1.x === takenSquares[i].y && move1.y === takenSquares[i].x) {} else {
-							choice1 = game.board[key];
-						}
-					}
-				} else if (move2.index === game.board[key].index) {
-					for (let i = 0; i < takenSquares.length; i++) {
-						if (move2.x === takenSquares[i].y && move2.y === takenSquares[i].x) {} else {
-							choice2 = game.board[key];
-						}
-					}
-				}
-			}
 			for (let key in game.board) {
 				let jumpMove1 = new player2Moves.JumpMove1(currentSquare.x, currentSquare.y, currentSquare.index);
 				let jumpMove2 = new player2Moves.JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);

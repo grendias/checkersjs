@@ -15,43 +15,32 @@ app.factory('HelperFact', () => {
   };
 
   let getCurrentSquare = (board, currentPiece) => {
-    console.log("board, currentPiece", board, currentPiece);
     let currentSquare;
     for (let key in board) {
       if (currentPiece.x === board[key].y && currentPiece.y === board[key].x) {
         currentSquare = board[key];
-        console.log("board[key", board[key]);
       }
     }
     return currentSquare;
   };
-  //
-  // let getRegularMoves = ({
-  //   board, move1, move2, takenSquares
-  // }) => {
-  //   console.log("board, move1, move2, takenSquares", board, move1, move2, takenSquares);
-  //   let choices = [];
-  //   for (let key in board) {
-  //     if (move1.index === board[key].index) {
-  //       for (let i = 0; i < takenSquares.length; i++) {
-  //         if (move1.x === takenSquares[i].y && move1.y === takenSquares[i].x) {} else {
-  //           choices.push(board[key]);
-  //         }
-  //       }
-  //     } else if (move2.index === board[key].index) {
-  //       for (let i = 0; i < takenSquares.length; i++) {
-  //         if (move2.x === takenSquares[i].y && move2.y === takenSquares[i].x) {} else {
-  //           choices.push(board[key]);
-  //         }
-  //       }
-  //     }
-  //   }
-  //   return choices;
-  // };
+
+  let getRegularMoves = ({
+    board, move, takenSquares
+  }) => {
+    for (let key in board) {
+      if (move.index === board[key].index) {
+        for (let i = 0; i < takenSquares.length; i++) {
+          if (move.x === takenSquares[i].y && move.y === takenSquares[i].x) {} else {
+            return board[key];
+          }
+        }
+      }
+    }
+  };
 
   return {
     getTakenSquares,
     getCurrentSquare,
-    // getRegularMoves
+    getRegularMoves
   };
 });
