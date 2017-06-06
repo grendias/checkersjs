@@ -14,16 +14,17 @@ app.factory('HelperFact', () => {
     return takenSquares;
   };
 
-  // let getCurrentSquare = (board, currentPiece) => {
-  //   console.log("board, currentPiece", board, currentPiece);
-  //   let currentSquare;
-  //   for (let key in board) {
-  //     if (currentPiece.x === board[key].y && currentPiece.y === board[key].x) {
-  //       currentSquare = board[key];
-  //     }
-  //   }
-  //   return currentSquare;
-  // };
+  let getCurrentSquare = (board, currentPiece) => {
+    console.log("board, currentPiece", board, currentPiece);
+    let currentSquare;
+    for (let key in board) {
+      if (currentPiece.x === board[key].y && currentPiece.y === board[key].x) {
+        currentSquare = board[key];
+        console.log("board[key", board[key]);
+      }
+    }
+    return currentSquare;
+  };
   //
   // let getRegularMoves = ({
   //   board, move1, move2, takenSquares
@@ -49,8 +50,8 @@ app.factory('HelperFact', () => {
   // };
 
   return {
-    getTakenSquares
-    // getCurrentSquare,
+    getTakenSquares,
+    getCurrentSquare,
     // getRegularMoves
   };
 });

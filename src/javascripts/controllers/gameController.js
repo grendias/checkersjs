@@ -88,7 +88,7 @@ app.controller('GameCtrl', function (
 		let kingMoves = MoveFact.kingMoves;
 		if (game.turn === piece.userid) {
 			var currentElement = e.currentTarget;
-			var currentSquare;
+			let currentSquare = HelperFact.getCurrentSquare(game.board, piece);
 			currentPiece = piece;
 			currentPiece.id = id;
 			$(currentElement).toggleClass('selected');
@@ -97,14 +97,7 @@ app.controller('GameCtrl', function (
 			var move2;
 			var move3;
 			var move4;
-			//finds where the other pieces are
 
-			//finds which board square the piece is in
-			for (let key in game.board) {
-				if (piece.x === game.board[key].y && piece.y === game.board[key].x) {
-					currentSquare = game.board[key];
-				}
-			}
 			//looks for possible non-jump moves
 			for (let key in game.board) {
 				move1 = new kingMoves.Move1(currentSquare.x, currentSquare.y, currentSquare.index);
@@ -212,36 +205,15 @@ app.controller('GameCtrl', function (
 
 		if (game.turn === piece.userid) {
 			let currentElement = e.currentTarget;
-			let currentSquare;
+			let currentSquare = HelperFact.getCurrentSquare(game.board, piece);
 			currentPiece = piece;
 			currentPiece.id = id;
 			$(currentElement).toggleClass('selected');
 			let takenSquares = HelperFact.getTakenSquares(currentPiece, game.pieces);
-			let takenSquares1 = [];
 			let move1, move2;
-			//finds the position of all the pieces
-			for (let id in game.pieces) {
-				if (game.pieces[id].x === piece.x && game.pieces[id].y === piece.y) {} else {
-					takenSquares1.push({
-						x: game.pieces[id].x,
-						y: game.pieces[id].y,
-						player: game.pieces[id].color
-					});
-				}
-			}
-			if (takenSquares == takenSquares1) {
-				console.log('takenSquares is the same')
-			} else {
-				console.log("takenSquares", takenSquares);
-				console.log("takenSquares1", takenSquares1);
-			}
 
-			//finds the position of the current piece
-			for (let key in game.board) {
-				if (piece.x === game.board[key].y && piece.y === game.board[key].x) {
-					currentSquare = game.board[key];
-				}
-			}
+
+
 			//looks for non-jump moves to see if they are empty
 			for (let key in game.board) {
 				move1 = new player1Moves.Move1(currentSquare.x, currentSquare.y, currentSquare.index);
@@ -295,7 +267,7 @@ app.controller('GameCtrl', function (
 		let player2Moves = MoveFact.player2Moves;
 		if (game.turn === piece.userid) {
 			let currentElement = e.currentTarget;
-			let currentSquare;
+			let currentSquare = HelperFact.getCurrentSquare(game.board, piece);
 			currentPiece = piece;
 			currentPiece.id = id;
 			$(currentElement).toggleClass('selected');
@@ -303,12 +275,6 @@ app.controller('GameCtrl', function (
 			let move1;
 			let move2;
 
-
-			for (let key in game.board) {
-				if (piece.x === game.board[key].y && piece.y === game.board[key].x) {
-					currentSquare = game.board[key];
-				}
-			}
 			for (let key in game.board) {
 				move1 = new player2Moves.Move1(currentSquare.x, currentSquare.y, currentSquare.index);
 				move2 = new player2Moves.Move2(currentSquare.x, currentSquare.y, currentSquare.index);

@@ -41,7 +41,7 @@ app.factory('MoveFact', () => {
       this.x = x - 2;
       this.y = y + 2;
     }
-  }
+  };
 
   let player1Moves = {
     Move1: function (x, y, index) {
@@ -64,7 +64,7 @@ app.factory('MoveFact', () => {
       this.x = x + 2;
       this.y = y + 2;
     }
-  }
+  };
 
   let player2Moves = {
     Move1: function (x, y, index) {
@@ -87,11 +87,11 @@ app.factory('MoveFact', () => {
       this.x = x - 2;
       this.y = y + 2;
     },
-  }
+  };
 
   return {
     kingMoves,
     player1Moves,
     player2Moves
-  }
+  };
 });
