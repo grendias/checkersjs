@@ -102,30 +102,19 @@ app.controller('DashboardCtrl', function ($timeout, AuthFactory, $location, $rou
 
 app.controller('GameCtrl', function ($timeout, BoardFact, $routeParams, $location, UsersFact, $cookies, $window, MoveFact, HelperFact) {
 	var game = this;
-	var player2Moves = MoveFact.player2Moves;
-	var kingMoves = MoveFact.kingMoves;
-	var player1Moves = MoveFact.player1Moves;
+
+	// $window.onbeforeunload = function (e) {
+	// 	e = e || $window.event;
+	// 	console.log(e);
+	// 	e.preventDefault = true;
+	// 	e.cancelBubble = true;
+	// 	e.returnValue = 'reload';
+	// };
+
 	var gameId = $routeParams.gameid;
 	var userId = $cookies.get('userid');
 	var userEmail = $cookies.get('email');
-
-	$window.onbeforeunload = function (e) {
-		e = e || $window.event;
-		console.log(e);
-		e.preventDefault = true;
-		e.cancelBubble = true;
-		e.returnValue = 'reload';
-	};
-
-	var currentPiece = void 0,
-	    choice1 = void 0,
-	    choice2 = void 0,
-	    choice3 = void 0,
-	    choice4 = void 0,
-	    jumpChoice1 = void 0,
-	    jumpChoice2 = void 0,
-	    jumpChoice3 = void 0,
-	    jumpChoice4 = void 0;
+	var currentPiece, choice1, choice2, choice3, choice4, jumpChoice1, jumpChoice2, jumpChoice3, jumpChoice4;
 	game.heading = "Checkers";
 	game.pieces = {};
 	game.messages = {};
@@ -196,12 +185,13 @@ app.controller('GameCtrl', function ($timeout, BoardFact, $routeParams, $locatio
 
 	//when a player chooses a king piece this function is called
 	game.chooseKing = function (e, piece, id) {
+		var kingMoves = MoveFact.kingMoves;
 		if (game.turn === piece.userid) {
+			var currentElement = e.currentTarget;
 			var currentSquare;
 			currentPiece = piece;
 			currentPiece.id = id;
-
-			$(e.currentTarget).toggleClass('selected');
+			$(currentElement).toggleClass('selected');
 			var takenSquares = HelperFact.getTakenSquares(currentPiece, game.pieces);
 			var move1;
 			var move2;
@@ -318,19 +308,34 @@ app.controller('GameCtrl', function ($timeout, BoardFact, $routeParams, $locatio
 
 	//when player 1 chooses a piece this function is called
 	game.choosePiecePlayer1 = function (e, piece, id) {
+		var player1Moves = MoveFact.player1Moves;
 
 		if (game.turn === piece.userid) {
+			var currentElement = e.currentTarget;
 			var currentSquare = void 0;
 			currentPiece = piece;
 			currentPiece.id = id;
-			console.log("piece", piece);
-			console.log("currentPiece", currentPiece);
-			console.log("e.currentTarget", e.currentTarget);
-			$(e.currentTarget).toggleClass('selected');
+			$(currentElement).toggleClass('selected');
 			var takenSquares = HelperFact.getTakenSquares(currentPiece, game.pieces);
+			var takenSquares1 = [];
 			var move1 = void 0,
 			    move2 = void 0;
 			//finds the position of all the pieces
+			for (var _id in game.pieces) {
+				if (game.pieces[_id].x === piece.x && game.pieces[_id].y === piece.y) {} else {
+					takenSquares1.push({
+						x: game.pieces[_id].x,
+						y: game.pieces[_id].y,
+						player: game.pieces[_id].color
+					});
+				}
+			}
+			if (takenSquares == takenSquares1) {
+				console.log('takenSquares is the same');
+			} else {
+				console.log("takenSquares", takenSquares);
+				console.log("takenSquares1", takenSquares1);
+			}
 
 			//finds the position of the current piece
 			for (var key in game.board) {
@@ -388,11 +393,13 @@ app.controller('GameCtrl', function ($timeout, BoardFact, $routeParams, $locatio
 
 	//same function as choosePiecePlayer1 except math for moves and jump criteria are different
 	game.choosePiecePlayer2 = function (e, piece, id) {
+		var player2Moves = MoveFact.player2Moves;
 		if (game.turn === piece.userid) {
+			var currentElement = e.currentTarget;
 			var currentSquare = void 0;
 			currentPiece = piece;
 			currentPiece.id = id;
-			$(e.currentTarget).toggleClass('selected');
+			$(currentElement).toggleClass('selected');
 			var takenSquares = HelperFact.getTakenSquares(currentPiece, game.pieces);
 			var move1 = void 0;
 			var move2 = void 0;
@@ -738,8 +745,44 @@ app.factory('HelperFact', function () {
     return takenSquares;
   };
 
+  // let getCurrentSquare = (board, currentPiece) => {
+  //   console.log("board, currentPiece", board, currentPiece);
+  //   let currentSquare;
+  //   for (let key in board) {
+  //     if (currentPiece.x === board[key].y && currentPiece.y === board[key].x) {
+  //       currentSquare = board[key];
+  //     }
+  //   }
+  //   return currentSquare;
+  // };
+  //
+  // let getRegularMoves = ({
+  //   board, move1, move2, takenSquares
+  // }) => {
+  //   console.log("board, move1, move2, takenSquares", board, move1, move2, takenSquares);
+  //   let choices = [];
+  //   for (let key in board) {
+  //     if (move1.index === board[key].index) {
+  //       for (let i = 0; i < takenSquares.length; i++) {
+  //         if (move1.x === takenSquares[i].y && move1.y === takenSquares[i].x) {} else {
+  //           choices.push(board[key]);
+  //         }
+  //       }
+  //     } else if (move2.index === board[key].index) {
+  //       for (let i = 0; i < takenSquares.length; i++) {
+  //         if (move2.x === takenSquares[i].y && move2.y === takenSquares[i].x) {} else {
+  //           choices.push(board[key]);
+  //         }
+  //       }
+  //     }
+  //   }
+  //   return choices;
+  // };
+
   return {
     getTakenSquares: getTakenSquares
+    // getCurrentSquare,
+    // getRegularMoves
   };
 });
 'use strict';

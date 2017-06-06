@@ -1,27 +1,20 @@
 "use strict";
-
 app.controller('GameCtrl', function (
 	$timeout, BoardFact, $routeParams, $location, UsersFact, $cookies, $window, MoveFact, HelperFact) {
 	const game = this;
-	const player2Moves = MoveFact.player2Moves;
-	const kingMoves = MoveFact.kingMoves;
-	const player1Moves = MoveFact.player1Moves;
+
+	// $window.onbeforeunload = function (e) {
+	// 	e = e || $window.event;
+	// 	console.log(e);
+	// 	e.preventDefault = true;
+	// 	e.cancelBubble = true;
+	// 	e.returnValue = 'reload';
+	// };
+
 	const gameId = $routeParams.gameid;
-	const userId = $cookies.get('userid');
-	const userEmail = $cookies.get('email');
-
-
-	$window.onbeforeunload = function (e) {
-		e = e || $window.event;
-		console.log(e);
-		e.preventDefault = true;
-		e.cancelBubble = true;
-		e.returnValue = 'reload';
-	};
-
-
-
-	let currentPiece, choice1, choice2, choice3, choice4, jumpChoice1, jumpChoice2, jumpChoice3, jumpChoice4;
+	var userId = $cookies.get('userid');
+	var userEmail = $cookies.get('email');
+	var currentPiece, choice1, choice2, choice3, choice4, jumpChoice1, jumpChoice2, jumpChoice3, jumpChoice4;
 	game.heading = "Checkers";
 	game.pieces = {};
 	game.messages = {};
@@ -92,12 +85,13 @@ app.controller('GameCtrl', function (
 
 	//when a player chooses a king piece this function is called
 	game.chooseKing = (e, piece, id) => {
+		let kingMoves = MoveFact.kingMoves;
 		if (game.turn === piece.userid) {
+			var currentElement = e.currentTarget;
 			var currentSquare;
 			currentPiece = piece;
 			currentPiece.id = id;
-
-			$(e.currentTarget).toggleClass('selected');
+			$(currentElement).toggleClass('selected');
 			let takenSquares = HelperFact.getTakenSquares(currentPiece, game.pieces);
 			var move1;
 			var move2;
@@ -214,18 +208,33 @@ app.controller('GameCtrl', function (
 
 	//when player 1 chooses a piece this function is called
 	game.choosePiecePlayer1 = (e, piece, id) => {
+		let player1Moves = MoveFact.player1Moves;
 
 		if (game.turn === piece.userid) {
+			let currentElement = e.currentTarget;
 			let currentSquare;
 			currentPiece = piece;
 			currentPiece.id = id;
-			console.log("piece", piece);
-			console.log("currentPiece", currentPiece);
-			console.log("e.currentTarget", e.currentTarget);
-			$(e.currentTarget).toggleClass('selected');
+			$(currentElement).toggleClass('selected');
 			let takenSquares = HelperFact.getTakenSquares(currentPiece, game.pieces);
+			let takenSquares1 = [];
 			let move1, move2;
 			//finds the position of all the pieces
+			for (let id in game.pieces) {
+				if (game.pieces[id].x === piece.x && game.pieces[id].y === piece.y) {} else {
+					takenSquares1.push({
+						x: game.pieces[id].x,
+						y: game.pieces[id].y,
+						player: game.pieces[id].color
+					});
+				}
+			}
+			if (takenSquares == takenSquares1) {
+				console.log('takenSquares is the same')
+			} else {
+				console.log("takenSquares", takenSquares);
+				console.log("takenSquares1", takenSquares1);
+			}
 
 			//finds the position of the current piece
 			for (let key in game.board) {
@@ -283,11 +292,13 @@ app.controller('GameCtrl', function (
 
 	//same function as choosePiecePlayer1 except math for moves and jump criteria are different
 	game.choosePiecePlayer2 = (e, piece, id) => {
+		let player2Moves = MoveFact.player2Moves;
 		if (game.turn === piece.userid) {
+			let currentElement = e.currentTarget;
 			let currentSquare;
 			currentPiece = piece;
 			currentPiece.id = id;
-			$(e.currentTarget).toggleClass('selected');
+			$(currentElement).toggleClass('selected');
 			let takenSquares = HelperFact.getTakenSquares(currentPiece, game.pieces);
 			let move1;
 			let move2;
