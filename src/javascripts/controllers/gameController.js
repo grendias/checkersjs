@@ -86,55 +86,7 @@ angular.module('app')
 
 		//when a player chooses a king piece this function is called
 		game.chooseKing = (e, piece, id) => {
-			//functions for the possible moves a king could make
-			function Move1(x, y, index) {
-				this.index = index + 9;
-				this.x = x + 1;
-				this.y = y + 1;
-			}
-
-			function Move2(x, y, index) {
-				this.index = index + 7;
-				this.x = x + 1;
-				this.y = y - 1;
-			}
-
-			function JumpMove2(x, y, index) {
-				this.index = index + 14;
-				this.x = x + 2;
-				this.y = y - 2;
-			}
-
-			function JumpMove1(x, y, index) {
-				this.index = index + 18;
-				this.x = x + 2;
-				this.y = y + 2;
-			}
-
-			function Move3(x, y, index) {
-				this.index = index - 9;
-				this.x = x - 1;
-				this.y = y - 1;
-			}
-
-			function Move4(x, y, index) {
-				this.index = index - 7;
-				this.x = x - 1;
-				this.y = y + 1;
-			}
-
-			function JumpMove3(x, y, index) {
-				this.index = index - 18;
-				this.x = x - 2;
-				this.y = y - 2;
-			}
-
-			function JumpMove4(x, y, index) {
-				this.index = index - 14;
-				this.x = x - 2;
-				this.y = y + 2;
-			}
-
+			let kingMoves = MoveFact.kingMoves;
 			if (game.turn === piece.userid) {
 				var currentElement = e.currentTarget;
 				var currentSquare;
@@ -164,10 +116,10 @@ angular.module('app')
 				}
 				//looks for possible non-jump moves
 				for (let key in game.board) {
-					move1 = new Move1(currentSquare.x, currentSquare.y, currentSquare.index);
-					move2 = new Move2(currentSquare.x, currentSquare.y, currentSquare.index);
-					move3 = new Move3(currentSquare.x, currentSquare.y, currentSquare.index);
-					move4 = new Move4(currentSquare.x, currentSquare.y, currentSquare.index);
+					move1 = new kingMoves.Move1(currentSquare.x, currentSquare.y, currentSquare.index);
+					move2 = new kingMoves.Move2(currentSquare.x, currentSquare.y, currentSquare.index);
+					move3 = new kingMoves.Move3(currentSquare.x, currentSquare.y, currentSquare.index);
+					move4 = new kingMoves.Move4(currentSquare.x, currentSquare.y, currentSquare.index);
 					//checks to see if possible move is empty
 					if (move1.index === game.board[key].index) {
 						for (let i = 0; i < takenSquares.length; i++) {
@@ -197,10 +149,10 @@ angular.module('app')
 				}
 				//checks for possible jump moves
 				for (let key in game.board) {
-					var jumpMove1 = new JumpMove1(currentSquare.x, currentSquare.y, currentSquare.index);
-					var jumpMove2 = new JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
-					var jumpMove3 = new JumpMove3(currentSquare.x, currentSquare.y, currentSquare.index);
-					var jumpMove4 = new JumpMove4(currentSquare.x, currentSquare.y, currentSquare.index);
+					var jumpMove1 = new kingMoves.JumpMove1(currentSquare.x, currentSquare.y, currentSquare.index);
+					var jumpMove2 = new kingMoves.JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
+					var jumpMove3 = new kingMoves.JumpMove3(currentSquare.x, currentSquare.y, currentSquare.index);
+					var jumpMove4 = new kingMoves.JumpMove4(currentSquare.x, currentSquare.y, currentSquare.index);
 					// checks to see if a jump move is possible
 					if (jumpMove1.index === game.board[key].index) {
 						for (let i = 0; i < takenSquares.length; i++) {
@@ -265,29 +217,7 @@ angular.module('app')
 
 		//when player 1 chooses a piece this function is called
 		game.choosePiecePlayer1 = (e, piece, id) => {
-			function Move1(x, y, index) {
-				this.index = index + 9;
-				this.x = x + 1;
-				this.y = y + 1;
-			}
-
-			function Move2(x, y, index) {
-				this.index = index + 7;
-				this.x = x + 1;
-				this.y = y - 1;
-			}
-
-			function JumpMove2(x, y, index) {
-				this.index = index + 14;
-				this.x = x + 2;
-				this.y = y - 2;
-			}
-
-			function JumpMove1(x, y, index) {
-				this.index = index + 18;
-				this.x = x + 2;
-				this.y = y + 2;
-			}
+			let player1Moves = MoveFact.player1Moves;
 			if (game.turn === piece.userid) {
 				var currentElement = e.currentTarget;
 				var currentSquare;
@@ -314,8 +244,8 @@ angular.module('app')
 				}
 				//looks for non-jump moves to see if they are empty
 				for (let key in game.board) {
-					move1 = new Move1(currentSquare.x, currentSquare.y, currentSquare.index);
-					move2 = new Move2(currentSquare.x, currentSquare.y, currentSquare.index);
+					move1 = new player1Moves.Move1(currentSquare.x, currentSquare.y, currentSquare.index);
+					move2 = new player1Moves.Move2(currentSquare.x, currentSquare.y, currentSquare.index);
 					if (move1.index === game.board[key].index) {
 						for (let i = 0; i < takenSquares.length; i++) {
 							if (move1.x === takenSquares[i].y && move1.y === takenSquares[i].x) {} else {
@@ -332,8 +262,8 @@ angular.module('app')
 				}
 				//checks for jump moves over white pieces and checks if they are empty
 				for (let key in game.board) {
-					var jumpMove1 = new JumpMove1(currentSquare.x, currentSquare.y, currentSquare.index);
-					var jumpMove2 = new JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
+					var jumpMove1 = new player1Moves.JumpMove1(currentSquare.x, currentSquare.y, currentSquare.index);
+					var jumpMove2 = new player1Moves.JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
 					if (jumpMove1.index === game.board[key].index) {
 						for (let i = 0; i < takenSquares.length; i++) {
 							if (move1.x === takenSquares[i].y && move1.y === takenSquares[i].x) {
@@ -362,29 +292,7 @@ angular.module('app')
 
 		//same function as choosePiecePlayer1 except math for moves and jump criteria are different
 		game.choosePiecePlayer2 = (e, piece, id) => {
-			function Move1(x, y, index) {
-				this.index = index - 9;
-				this.x = x - 1;
-				this.y = y - 1;
-			}
-
-			function Move2(x, y, index) {
-				this.index = index - 7;
-				this.x = x - 1;
-				this.y = y + 1;
-			}
-
-			function JumpMove1(x, y, index) {
-				this.index = index - 18;
-				this.x = x - 2;
-				this.y = y - 2;
-			}
-
-			function JumpMove2(x, y, index) {
-				this.index = index - 14;
-				this.x = x - 2;
-				this.y = y + 2;
-			}
+			let player2Moves = MoveFact.player2Moves;
 			if (game.turn === piece.userid) {
 				var currentElement = e.currentTarget;
 				var currentSquare;
@@ -410,8 +318,8 @@ angular.module('app')
 					}
 				}
 				for (let key in game.board) {
-					move1 = new Move1(currentSquare.x, currentSquare.y, currentSquare.index);
-					move2 = new Move2(currentSquare.x, currentSquare.y, currentSquare.index);
+					move1 = new player2Moves.Move1(currentSquare.x, currentSquare.y, currentSquare.index);
+					move2 = new player2Moves.Move2(currentSquare.x, currentSquare.y, currentSquare.index);
 					if (move1.index === game.board[key].index) {
 						for (let i = 0; i < takenSquares.length; i++) {
 							if (move1.x === takenSquares[i].y && move1.y === takenSquares[i].x) {} else {
@@ -427,8 +335,8 @@ angular.module('app')
 					}
 				}
 				for (let key in game.board) {
-					var jumpMove1 = new JumpMove1(currentSquare.x, currentSquare.y, currentSquare.index);
-					var jumpMove2 = new JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
+					var jumpMove1 = new player2Moves.JumpMove1(currentSquare.x, currentSquare.y, currentSquare.index);
+					var jumpMove2 = new player2Moves.JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
 					if (jumpMove1.index === game.board[key].index) {
 						for (let i = 0; i < takenSquares.length; i++) {
 							if (move1.x === takenSquares[i].y && move1.y === takenSquares[i].x) {
