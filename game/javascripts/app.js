@@ -43,8 +43,11 @@ app.controller('DashboardCtrl', function ($timeout, AuthFactory, $location, $rou
 			turn: uid,
 			player1Death: 0,
 			player2Death: 0
+		}).then(function (game) {
+			console.log("game", game.key);
 		});
 		//creates player 1 pieces
+
 		for (var key in dash.games) {
 			if (dash.games[key].player1 === uid) {
 				var pieceCount = 8;
@@ -710,6 +713,8 @@ app.factory('HelperFact', function ($timeout) {
       }
     }
   };
+
+  var createPlayer1 = function createPlayer1() {};
 
   return {
     getTakenSquares: getTakenSquares,

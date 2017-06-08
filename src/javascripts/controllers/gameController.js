@@ -321,44 +321,11 @@ app.controller('GameCtrl', function (
 		}
 	};
 
-
 	game.reset = () => {
 		//function to play again
 		firebase.database().ref(`/${gameId}/`).remove();
-		var pieceCount = 16;
-		for (let i = 0; i < pieceCount; i++) {
-			if (i < pieceCount / 2) {
-				// player 1
-				let y = Math.floor(i / 4);
-				let x = (i % 4) * 2 + (1 - y % 2);
-				firebase.database().ref(`/${gameId}/`).push({
-					'gameId': gameId,
-					'userid': game.player1Id,
-					'color': 'red',
-					'top': (y * 70) + 'px',
-					'left': (x * 70) + 'px',
-					'x': x,
-					'y': y,
-					'king': false,
-					'player1': true
-				});
-			} else {
-				// player 2
-				let y = Math.floor(i / 4) + 4;
-				let x = (i % 4) * 2 + (1 - y % 2);
-				firebase.database().ref(`/${gameId}/`).push({
-					'gameId': gameId,
-					'userid': game.player2Id,
-					'color': 'white',
-					'top': (y * 70) + 'px',
-					'left': (x * 70) + 'px',
-					'x': x,
-					'y': y,
-					'king': false,
-					'player1': false
-				});
-			}
-		}
+		HelperFact.createPlayer1(gameId, game.player1Id);
+		HelperFact.createPlayer2(gameId, game.player2Id);
 		firebase.database().ref(`games/${gameId}/`).update({
 			player1Death: 0,
 			player2Death: 0
@@ -388,5 +355,4 @@ app.controller('GameCtrl', function (
 		});
 		game.message = '';
 	};
-
 });

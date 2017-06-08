@@ -108,6 +108,45 @@ app.factory('HelperFact', ($timeout) => {
     }
   };
 
+  let createPlayer1 = (gameId, userId) => {
+    let pieceCount = 8;
+    for (let i = 0; i < pieceCount; i++) {
+      let y = Math.floor(i / 4);
+      let x = (i % 4) * 2 + (1 - y % 2);
+      firebase.database().ref(`/${key}/`).push({
+        'gameId': gameId,
+        'userid': userId,
+        'color': 'red',
+        'top': (y * 70) + 'px',
+        'left': (x * 70) + 'px',
+        'x': x,
+        'y': y,
+        'king': false,
+        'player1': true
+      });
+    }
+  };
+
+  let createPlayer2 = (gameId, uid) => {
+    var pieceCount = 8;
+    //creates player 2 pieces
+    for (let i = 0; i < pieceCount; i++) {
+      let y = Math.floor(i / 4) + 6;
+      let x = (i % 4) * 2 + (1 - y % 2);
+      firebase.database().ref(`/${gameId}/`).push({
+        'gameId': gameId,
+        'userid': uid,
+        'color': 'white',
+        'top': (y * 70) + 'px',
+        'left': (x * 70) + 'px',
+        'x': x,
+        'y': y,
+        'king': false,
+        'player1': false
+      });
+    }
+  }
+
   return {
     getTakenSquares,
     getCurrentSquare,
@@ -115,6 +154,8 @@ app.factory('HelperFact', ($timeout) => {
     getJumpMove,
     getKingJumpMove,
     getKingPiece,
-    removePiece
+    removePiece,
+    createPlayer1,
+    createPlayer2
   };
 });
