@@ -1,5 +1,5 @@
 "use strict";
-app.controller('DashboardCtrl', function ($timeout, AuthFactory, $location, $routeParams) {
+app.controller('DashboardCtrl', function ($timeout, AuthFactory, $location, $routeParams, HelperFact) {
 	const dash = this;
 	var uid = $routeParams.uid;
 	var userEmail;
@@ -32,7 +32,9 @@ app.controller('DashboardCtrl', function ($timeout, AuthFactory, $location, $rou
 			console.log("game", game.key);
 			HelperFact.createPlayer1(game.key, uid);
 			$location.path(`checkers/${game.key}`);
+			$timeout();
 		});
+
 	};
 
 	//when a player clicks 'Join Game' they are added to the game as player 2
@@ -41,7 +43,7 @@ app.controller('DashboardCtrl', function ($timeout, AuthFactory, $location, $rou
 			player2: uid,
 			player2Email: userEmail
 		});
-		HelperFact.createPlayer2(gameId, uid)
+		HelperFact.createPlayer2(gameId, uid);
 		$location.path(`checkers/${gameId}`);
 	};
 

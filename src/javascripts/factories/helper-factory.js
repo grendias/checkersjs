@@ -113,7 +113,7 @@ app.factory('HelperFact', ($timeout) => {
     for (let i = 0; i < pieceCount; i++) {
       let y = Math.floor(i / 4);
       let x = (i % 4) * 2 + (1 - y % 2);
-      firebase.database().ref(`/${key}/`).push({
+      firebase.database().ref(`/${gameId}/`).push({
         'gameId': gameId,
         'userid': userId,
         'color': 'red',
@@ -145,7 +145,7 @@ app.factory('HelperFact', ($timeout) => {
         'player1': false
       });
     }
-  }
+  };
 
   return {
     getTakenSquares,
