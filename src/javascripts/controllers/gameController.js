@@ -152,7 +152,6 @@ app.controller('GameCtrl', function (
 	};
 
 	game.choosePiecePlayer1 = (e, piece, id) => {
-		console.log("usableSquares", usableSquares);
 		//when player 1 chooses a piece this function is called
 		if (game.turn === piece.userid) {
 			$(e.currentTarget).toggleClass('selected');
@@ -232,7 +231,6 @@ app.controller('GameCtrl', function (
 		}
 	};
 
-	//when a player chooses a legal move
 	game.chooseSquare = (square) => {
 		//if the square they choose matches any of the possible moves the player has
 		if (square === choice1 || square === choice2 || square === choice3 || square === choice4 || square === jumpChoice1 || square === jumpChoice2 || square === jumpChoice3 || square === jumpChoice4) {
