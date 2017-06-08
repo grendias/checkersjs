@@ -21,16 +21,11 @@ app.controller('GameCtrl', function (
 		var oddY = y % 2;
 		return (oddX ^ oddY);
 	};
+	let usableSquares = game.board.filter((square) => {
+		return game.chckBrd(square.x, square.y);
+	});
 
-	if (game.player1Id === userId) {
-		game.playerEmail = game.player1Email;
-		game.playerColor = 'red';
-		game.player = '1';
-	} else if (game.player2Id === userId) {
-		game.playerEmail = game.player2Email;
-		game.playerColor = 'white';
-		game.player = '2';
-	}
+
 
 	game.toggleTurn = () => {
 		//determines who's turn it is
@@ -64,6 +59,16 @@ app.controller('GameCtrl', function (
 		}
 	});
 
+	if (game.player1Id === userId) {
+		game.playerEmail = game.player1Email;
+		game.playerColor = 'red';
+		game.player = '1';
+	} else if (game.player2Id === userId) {
+		game.playerEmail = game.player2Email;
+		game.playerColor = 'white';
+		game.player = '2';
+	}
+
 	function removeSelected() {
 		//function to reset player moves
 		currentPiece = null;
@@ -84,7 +89,7 @@ app.controller('GameCtrl', function (
 			$(e.currentTarget).toggleClass('selected');
 			currentPiece = piece;
 			currentPiece.id = id;
-			let currentSquare = HelperFact.getCurrentSquare(game.board, piece),
+			let currentSquare = HelperFact.getCurrentSquare(usableSquares, piece),
 				takenSquares = HelperFact.getTakenSquares(currentPiece, game.pieces),
 				move1 = new player1Moves.Move1(currentSquare.x, currentSquare.y, currentSquare.index),
 				move2 = new player1Moves.Move2(currentSquare.x, currentSquare.y, currentSquare.index),
@@ -96,48 +101,48 @@ app.controller('GameCtrl', function (
 				jumpMove4 = new player2Moves.JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
 
 			choice1 = HelperFact.getRegularMove({
-				board: game.board,
+				board: usableSquares,
 				move: move1,
 				takenSquares: takenSquares,
 			});
 			choice2 = HelperFact.getRegularMove({
-				board: game.board,
+				board: usableSquares,
 				takenSquares: takenSquares,
 				move: move2
 			});
 			choice3 = HelperFact.getRegularMove({
-				board: game.board,
+				board: usableSquares,
 				move: move3,
 				takenSquares: takenSquares,
 			});
 			choice4 = HelperFact.getRegularMove({
-				board: game.board,
+				board: usableSquares,
 				takenSquares: takenSquares,
 				move: move4
 			});
 			jumpChoice1 = HelperFact.getKingJumpMove({
-				board: game.board,
+				board: usableSquares,
 				takenSquares: takenSquares,
 				move: move1,
 				jumpMove: jumpMove1,
 				player: game.playerColor
 			});
 			jumpChoice2 = HelperFact.getKingJumpMove({
-				board: game.board,
+				board: usableSquares,
 				takenSquares: takenSquares,
 				move: move2,
 				jumpMove: jumpMove2,
 				player: game.playerColor
 			});
 			jumpChoice3 = HelperFact.getKingJumpMove({
-				board: game.board,
+				board: usableSquares,
 				takenSquares: takenSquares,
 				move: move3,
 				jumpMove: jumpMove3,
 				player: game.playerColor
 			});
 			jumpChoice4 = HelperFact.getKingJumpMove({
-				board: game.board,
+				board: usableSquares,
 				takenSquares: takenSquares,
 				move: move4,
 				jumpMove: jumpMove4,
@@ -147,12 +152,13 @@ app.controller('GameCtrl', function (
 	};
 
 	game.choosePiecePlayer1 = (e, piece, id) => {
+		console.log("usableSquares", usableSquares);
 		//when player 1 chooses a piece this function is called
 		if (game.turn === piece.userid) {
 			$(e.currentTarget).toggleClass('selected');
 			currentPiece = piece;
 			currentPiece.id = id;
-			let currentSquare = HelperFact.getCurrentSquare(game.board, piece),
+			let currentSquare = HelperFact.getCurrentSquare(usableSquares, piece),
 				takenSquares = HelperFact.getTakenSquares(currentPiece, game.pieces),
 				move1 = new player1Moves.Move1(currentSquare.x, currentSquare.y, currentSquare.index),
 				move2 = new player1Moves.Move2(currentSquare.x, currentSquare.y, currentSquare.index),
@@ -160,24 +166,24 @@ app.controller('GameCtrl', function (
 				jumpMove2 = new player1Moves.JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
 
 			choice1 = HelperFact.getRegularMove({
-				board: game.board,
+				board: usableSquares,
 				move: move1,
 				takenSquares: takenSquares,
 			});
 			choice2 = HelperFact.getRegularMove({
-				board: game.board,
+				board: usableSquares,
 				takenSquares: takenSquares,
 				move: move2
 			});
 			jumpChoice1 = HelperFact.getJumpMove({
-				board: game.board,
+				board: usableSquares,
 				jumpMove: jumpMove1,
 				move: move1,
 				takenSquares: takenSquares,
 				oppositePlayer: 'white'
 			});
 			jumpChoice2 = HelperFact.getJumpMove({
-				board: game.board,
+				board: usableSquares,
 				jumpMove: jumpMove2,
 				move: move2,
 				takenSquares: takenSquares,
@@ -192,7 +198,7 @@ app.controller('GameCtrl', function (
 			$(e.currentTarget).toggleClass('selected');
 			currentPiece = piece;
 			currentPiece.id = id;
-			let currentSquare = HelperFact.getCurrentSquare(game.board, piece),
+			let currentSquare = HelperFact.getCurrentSquare(usableSquares, piece),
 				takenSquares = HelperFact.getTakenSquares(currentPiece, game.pieces),
 				move1 = new player2Moves.Move1(currentSquare.x, currentSquare.y, currentSquare.index),
 				move2 = new player2Moves.Move2(currentSquare.x, currentSquare.y, currentSquare.index),
@@ -200,24 +206,24 @@ app.controller('GameCtrl', function (
 				jumpMove2 = new player2Moves.JumpMove2(currentSquare.x, currentSquare.y, currentSquare.index);
 
 			choice1 = HelperFact.getRegularMove({
-				board: game.board,
+				board: usableSquares,
 				move: move1,
 				takenSquares: takenSquares,
 			});
 			choice2 = HelperFact.getRegularMove({
-				board: game.board,
+				board: usableSquares,
 				takenSquares: takenSquares,
 				move: move2
 			});
 			jumpChoice3 = HelperFact.getJumpMove({
-				board: game.board,
+				board: usableSquares,
 				jumpMove: jumpMove1,
 				move: move1,
 				takenSquares: takenSquares,
 				oppositePlayer: 'red'
 			});
 			jumpChoice4 = HelperFact.getJumpMove({
-				board: game.board,
+				board: usableSquares,
 				jumpMove: jumpMove2,
 				move: move2,
 				takenSquares: takenSquares,
@@ -245,92 +251,61 @@ app.controller('GameCtrl', function (
 				left: newLeft
 			}, "slide");
 
-			//checks to see if a piece will be kinged
-			if (currentPiece.color === 'red' && square.x === 7) {
-				firebase.database().ref(`/${gameId}/${currentPiece.id}`).update({
-					king: true
-				});
-				$timeout();
-			}
-			if (currentPiece.color === 'white' && square.x === 0) {
-				firebase.database().ref(`/${gameId}/${currentPiece.id}`).update({
-					king: true
-				});
-				$timeout();
-			}
-			//if player makes a jump move: the jumped pieced is removed and player death is updated
+			HelperFact.getKingPiece({
+				currentPiece: currentPiece,
+				player: game.playerColor,
+				number: 7,
+				square: square,
+				gameId: gameId
+			});
+			HelperFact.getKingPiece({
+				currentPiece: currentPiece,
+				player: game.playerColor,
+				number: 0,
+				square: square,
+				gameId: gameId
+			});
+
 			if (square === jumpChoice1) {
-				let jumpSquareX = jumpChoice1.x - 1;
-				let jumpSquareY = jumpChoice1.y - 1;
-				for (let key in game.pieces) {
-					if (game.pieces[key].y === jumpSquareX && game.pieces[key].x === jumpSquareY) {
-						firebase.database().ref(`/${gameId}/${key}`).remove();
-						$timeout();
-						if (currentPiece.color === 'red') {
-							firebase.database().ref(`games/${gameId}/`).update({
-								player2Death: game.player2Death + 1
-							});
-						} else {
-							firebase.database().ref(`games/${gameId}/`).update({
-								player1Death: game.player1Death + 1
-							});
-						}
-					}
-				}
+				HelperFact.removePiece({
+					pieces: game.pieces,
+					squareX: jumpChoice1.x - 1,
+					squareY: jumpChoice1.y - 1,
+					currentPiece: currentPiece,
+					gameId: gameId,
+					player1: game.player1Death,
+					player2: game.player2Death
+				});
 			} else if (square === jumpChoice2) {
-				let jumpSquareX = jumpChoice2.x - 1;
-				let jumpSquareY = jumpChoice2.y + 1;
-				for (let key in game.pieces) {
-					if (game.pieces[key].y === jumpSquareX && game.pieces[key].x === jumpSquareY) {
-						firebase.database().ref(`/${gameId}/${key}`).remove();
-						$timeout();
-						if (currentPiece.color === 'red') {
-							firebase.database().ref(`games/${gameId}/`).update({
-								player2Death: game.player2Death + 1
-							});
-						} else {
-							firebase.database().ref(`games/${gameId}/`).update({
-								player1Death: game.player1Death + 1
-							});
-						}
-					}
-				}
+				HelperFact.removePiece({
+					pieces: game.pieces,
+					squareX: jumpChoice2.x - 1,
+					squareY: jumpChoice2.y + 1,
+					currentPiece: currentPiece,
+					gameId: gameId,
+					player1: game.player1Death,
+					player2: game.player2Death
+				});
 			} else if (square === jumpChoice3) {
-				let jumpSquareX = jumpChoice3.x + 1;
-				let jumpSquareY = jumpChoice3.y + 1;
-				for (let key in game.pieces) {
-					if (game.pieces[key].y === jumpSquareX && game.pieces[key].x === jumpSquareY) {
-						firebase.database().ref(`/${gameId}/${key}`).remove();
-						$timeout();
-						if (currentPiece.color === 'red') {
-							firebase.database().ref(`games/${gameId}/`).update({
-								player2Death: game.player2Death + 1
-							});
-						} else {
-							firebase.database().ref(`games/${gameId}/`).update({
-								player1Death: game.player1Death + 1
-							});
-						}
-					}
-				}
+				HelperFact.removePiece({
+					pieces: game.pieces,
+					squareX: jumpChoice3.x + 1,
+					squareY: jumpChoice3.y + 1,
+					currentPiece: currentPiece,
+					gameId: gameId,
+					player1: game.player1Death,
+					player2: game.player2Death
+				});
 			} else if (square === jumpChoice4) {
-				let jumpSquareX = jumpChoice4.x + 1;
-				let jumpSquareY = jumpChoice4.y - 1;
-				for (let key in game.pieces) {
-					if (game.pieces[key].y === jumpSquareX && game.pieces[key].x === jumpSquareY) {
-						firebase.database().ref(`/${gameId}/${key}`).remove();
-						$timeout();
-						if (currentPiece.color === 'red') {
-							firebase.database().ref(`games/${gameId}/`).update({
-								player2Death: game.player2Death + 1
-							});
-						} else {
-							firebase.database().ref(`games/${gameId}/`).update({
-								player1Death: game.player1Death + 1
-							});
-						}
-					}
-				}
+				HelperFact.removePiece({
+					pieces: game.pieces,
+					squareX: jumpChoice4.x + 1,
+					squareY: jumpChoice4.y - 1,
+					currentPiece: currentPiece,
+					gameId: gameId,
+					player1: game.player1Death,
+					player2: game.player2Death
+				});
 			}
 
 			if (game.turn === game.player1Id) {
@@ -346,8 +321,9 @@ app.controller('GameCtrl', function (
 		}
 	};
 
-	//function to play again
+
 	game.reset = () => {
+		//function to play again
 		firebase.database().ref(`/${gameId}/`).remove();
 		var pieceCount = 16;
 		for (let i = 0; i < pieceCount; i++) {

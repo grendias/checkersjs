@@ -1,5 +1,5 @@
 "use strict";
-app.factory('HelperFact', () => {
+app.factory('HelperFact', ($timeout) => {
   let getTakenSquares = (currentPiece, allPieces) => {
     let takenSquares = [];
     for (let id in allPieces) {
@@ -76,11 +76,45 @@ app.factory('HelperFact', () => {
     }
   };
 
+  let getKingPiece = ({
+    currentPiece, player, number, square, gameId
+  }) => {
+    if (currentPiece.color === player && square.x === number) {
+      firebase.database().ref(`/${gameId}/${currentPiece.id}`).update({
+        king: true
+      });
+      $timeout();
+    }
+  };
+
+  let removePiece = ({
+    pieces, squareX, squareY, currentPiece, gameId, player1, player2
+  }) => {
+
+    for (let key in pieces) {
+      if (pieces[key].y === squareX && pieces[key].x === squareY) {
+        firebase.database().ref(`/${gameId}/${key}`).remove();
+        $timeout();
+        if (currentPiece.color === 'red') {
+          firebase.database().ref(`games/${gameId}/`).update({
+            player2Death: player2 + 1
+          });
+        } else {
+          firebase.database().ref(`games/${gameId}/`).update({
+            player1Death: player1 + 1
+          });
+        }
+      }
+    }
+  };
+
   return {
     getTakenSquares,
     getCurrentSquare,
     getRegularMove,
     getJumpMove,
-    getKingJumpMove
+    getKingJumpMove,
+    getKingPiece,
+    removePiece
   };
 });
