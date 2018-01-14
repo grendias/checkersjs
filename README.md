@@ -1,6 +1,6 @@
 # Checkers
 ## Nashville Software School Cohort 13 Front End Project
-### [Click here to play](http://hannahhall.github.io/checkers/#/)
+### [Angular 5 Version](https://github.com/hannahhall/checkers)
 
 Checkers app is an online game room for playing checkers. Players can also message their opponents during game play. 
 
